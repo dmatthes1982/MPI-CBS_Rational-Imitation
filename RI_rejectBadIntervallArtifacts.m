@@ -19,10 +19,10 @@ artifact = artifact(1:j-1, :);
 cfg                           = [];
 cfg.event                     = events;
 cfg.artfctdef.reject          = 'complete';
-cfg.artfctdef.feedback        = 'yes';
+cfg.artfctdef.feedback        = 'no';
 cfg.artfctdef.xxx.artifact    = artifact;
+cfg.showcallinfo              = 'no';
 
 data_out = ft_rejectartifact(cfg, data_in);
 
 end
-
