@@ -15,7 +15,7 @@ cfg.zlim            = 'maxmin';
 cfg.trials          = 'all';                                                % select trial (or 'all' trials)
 cfg.feedback        = 'no';                                                 % suppress feedback output
 cfg.showcallinfo    = 'no';                                                 % suppress function call output
-cfg.channel         = 16;      
+cfg.channel         = 4;      
 
 ft_singleplotTFR(cfg, data_in);                                             % plot the time frequency response
 
