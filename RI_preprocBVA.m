@@ -1,7 +1,9 @@
+function [data_head, data_hand, trialsAveraged] = RI_preprocBVA( path_head, ...
+  path_hand, childs )
+
 % -------------------------------------------------------------------------
 % General definitions & Allocating memory
 % -------------------------------------------------------------------------
-childs                      = 68;                                           % number of all participants      
 trialsAveraged(childs).head = [];                                           % shows how many good trials are in condition head touch for each participant
 trialsAveraged(childs).hand = [];                                           % shows how many good trials are in condition hand touch for each participant
 data_head{childs}           = [];                                           % data cell array for condition head touch
@@ -10,7 +12,7 @@ data_hand{childs}           = [];                                           % da
 % -------------------------------------------------------------------------
 % Prerocessing data of condition "head touch"
 % -------------------------------------------------------------------------
-folder      = '../../data/RationalImitation/handsRestr_SegHead_BVA/';       % specifies the data folder
+folder      = path_head;                                                    % specifies the data folder
 filelist    = dir([folder, '/*.vhdr']);                                     % gets the filelist of the folder
 filelist    = struct2cell(filelist);
 filelist    = filelist(1,:);
@@ -32,7 +34,7 @@ end
 % -------------------------------------------------------------------------
 % Prerocessing data of condition "hand touch"
 % -------------------------------------------------------------------------
-folder      = '../../data/RationalImitation/handsRestr_SegHand_BVA/';       % specifies the data folder
+folder      = path_hand;                                                    % specifies the data folder
 filelist    = dir([folder, '/*.vhdr']);                                     % gets the filelist of the folder
 filelist    = struct2cell(filelist);
 filelist    = filelist(1,:);
@@ -51,4 +53,4 @@ for i=1:1:childs                                                            % pr
   end
 end
 
-clear i childs conditions folder filelist cellnumber header path;
+end
