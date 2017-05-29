@@ -21,7 +21,7 @@ q.FontWeight = 'bold';
 for a=1:1:9
   subplot(3,3,a, 'Parent', p);
   xlabel('frequency (Hz)');
-  ylabel('power/frequency (1/Hz)');
+  ylabel('power/frequency (dB/Hz)');
   hold on;
 end
 
@@ -49,14 +49,14 @@ if lengthInput > 1
     if ~isempty(data_in{i})
       for j=1:1:9
         subplot(3,3,j);
-        plot(data_in{i}.freq(1:46), data_in{i}.powspctrm(j,1:46));
+        plot(data_in{i}.freq(1:46), 10*log(data_in{i}.powspctrm(j,1:46)));
       end
     end
   end
 else
   for j=1:1:9
     subplot(3,3,j);
-    plot(data_in.freq(1:46), data_in.powspctrm(j,1:46));
+    plot(data_in.freq(1:46), 10*log(data_in.powspctrm(j,1:46)));
   end
 end
 

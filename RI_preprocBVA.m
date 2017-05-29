@@ -1,5 +1,5 @@
-function [data_head, data_hand, trialsAveraged] = RI_preprocBVA( path_head, ...
-  path_hand, childs )
+function [data_hand, data_head, trialsAveraged] = RI_preprocBVA( path_hand, ...
+  path_head, childs )
 
 % -------------------------------------------------------------------------
 % General definitions & Allocating memory
