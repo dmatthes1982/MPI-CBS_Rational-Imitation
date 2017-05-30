@@ -7,7 +7,7 @@ if data_import == 0
   selected_version = 1;                                                     % Select version of already imported data / if data_import = 1, variable is not used 
 end
 
-children = 0;                                                               % 1 = Dataset with childs / 0 = Dataset with adults
+children = 0;                                                               % 1 = Dataset with children / 0 = Dataset with adults
 
 if children == 0                                                            % Adults
   handsFree_SegHand_srcFolder = ...
@@ -29,25 +29,25 @@ if children == 0                                                            % Ad
   handsRestr_out_03_name = 'RI_handsRestr_Ad_03_FFT';
   handsRestr_out_04_name = 'RI_handsRestr_Ad_04_FFTmean';
   handsFree_fig_01_title = ... 
-    'Adults - Hands free - Condition: Hand - Mean power of every person';
+    'Adults - Hands free - Hand - Mean power of every person';
   handsFree_fig_02_title = ... 
-    'Adults - Hands free - Condition: Head - Mean power of every person';
+    'Adults - Hands free - Head - Mean power of every person';
   handsFree_fig_03_title = ... 
-    'Adults - Hands free - Condition: Hand - Power over all persons';
+    'Adults - Hands free - Hand - Power over all persons';
   handsFree_fig_04_title = ... 
-    'Adults - Hands free - Condition: Head - Power over all persons';
+    'Adults - Hands free - Head - Power over all persons';
   handsFree_fig_05_title = ... 
-    'Adults - Hands free - Condition: Hand & Head - Power over all persons';
+    'Adults - Hands free - Hand vs. Head - Power over all persons';
   handsRestr_fig_01_title = ... 
-    'Adults - Hands restraint - Condition: Hand - Mean power of every person';
+    'Adults - Hands restraint - Hand - Mean power of every person';
   handsRestr_fig_02_title = ... 
-    'Adults - Hands restraint - Condition: Head - Mean power of every person';
+    'Adults - Hands restraint - Head - Mean power of every person';
   handsRestr_fig_03_title = ... 
-    'Adults - Hands restraint - Condition: Hand - Power over all persons';
+    'Adults - Hands restraint - Hand - Power over all persons';
   handsRestr_fig_04_title = ... 
-    'Adults - Hands restraint - Condition: Head - Power over all persons';
+    'Adults - Hands restraint - Head - Power over all persons';
   handsRestr_fig_05_title = ... 
-    'Adults - Hands restraint - Condition: Hand & Head - Power over all persons';
+    'Adults - Hands restraint - Hand vs. Head - Power over all persons';
   handsFree_pdf_01_title = 'Adults-Handsfree-Hand';
   handsFree_pdf_02_title = 'Adults-Handsfree-Head';
   handsFree_pdf_03_title = 'Adults-Handsfree-HandMean';
@@ -78,35 +78,35 @@ elseif children == 1                                                        % Ch
   handsRestr_out_03_name = 'RI_handsRestr_03_FFT';
   handsRestr_out_04_name = 'RI_handsRestr_04_FFTmean';
   handsFree_fig_01_title = ... 
-    'Children - Hands free - Condition: Hand - Mean power of every person';
+    'Children - Hands free - Hand - Mean power of every person';
   handsFree_fig_02_title = ... 
-    'Children - Hands free - Condition: Head - Mean power of every person';
+    'Children - Hands free - Head - Mean power of every person';
   handsFree_fig_03_title = ... 
-    'Children - Hands free - Condition: Hand - Power over all persons';
+    'Children - Hands free - Hand - Power over all persons';
   handsFree_fig_04_title = ... 
-    'Children - Hands free - Condition: Head - Power over all persons';
+    'Children - Hands free - Head - Power over all persons';
   handsFree_fig_05_title = ... 
-    'Children - Hands free - Condition: Hand & Head - Power over all persons';
+    'Children - Hands free - Hand vs. Head - Power over all persons';
   handsRestr_fig_01_title = ... 
-    'Children - Hands restraint - Condition: Hand - Mean power of every person';
+    'Children - Hands restraint - Hand - Mean power of every person';
   handsRestr_fig_02_title = ... 
-    'Children - Hands restraint - Condition: Head - Mean power of every person';
+    'Children - Hands restraint - Head - Mean power of every person';
   handsRestr_fig_03_title = ... 
-    'Children - Hands restraint - Condition: Hand - Power over all persons';
+    'Children - Hands restraint - Hand - Power over all persons';
   handsRestr_fig_04_title = ... 
-    'Children - Hands restraint - Condition: Head - Power over all persons';
+    'Children - Hands restraint - Head - Power over all persons';
   handsRestr_fig_05_title = ... 
-    'Children - Hands restraint - Condition: Hand & Head - Power over all persons';
-  handsFree_pdf_01_title = 'Handsfree-Hand';
-  handsFree_pdf_02_title = 'Handsfree-Head';
-  handsFree_pdf_03_title = 'Handsfree-HandMean';
-  handsFree_pdf_04_title = 'Handsfree-HeadMean';
-  handsFree_pdf_05_title = 'Handsfree-Compare-HandHeadMean';
-  handsRestr_pdf_01_title = 'Handsrestr-Hand';
-  handsRestr_pdf_02_title = 'Handsrestr-Head';
-  handsRestr_pdf_03_title = 'Handsrestr-HandMean';
-  handsRestr_pdf_04_title = 'Handsrestr-HeadMean';
-  handsRestr_pdf_05_title = 'Handsrestr-Compare-HandHeadMean';
+    'Children - Hands restraint - Hand vs. Head - Power over all persons';
+  handsFree_pdf_01_title = 'Children-Handsfree-Hand';
+  handsFree_pdf_02_title = 'Children-Handsfree-Head';
+  handsFree_pdf_03_title = 'Children-Handsfree-HandMean';
+  handsFree_pdf_04_title = 'Children-Handsfree-HeadMean';
+  handsFree_pdf_05_title = 'Children-Handsfree-Compare-HandHeadMean';
+  handsRestr_pdf_01_title = 'Children-Handsrestr-Hand';
+  handsRestr_pdf_02_title = 'Children-Handsrestr-Head';
+  handsRestr_pdf_03_title = 'Children-Handsrestr-HandMean';
+  handsRestr_pdf_04_title = 'Children-Handsrestr-HeadMean';
+  handsRestr_pdf_05_title = 'Children-Handsrestr-Compare-HandHeadMean';
 end
 
 % -------------------------------------------------------------------------
@@ -131,6 +131,7 @@ if data_import == 1
   dest_folder = '../../processed/RationalImitation/';
   file_name = strcat(dest_folder, handsFree_out_01_name);
   file_path = strcat(file_name, '_001.mat');
+  file_version = '_001.mat';
   if exist(file_path, 'file') == 2
     file_pattern = strcat(file_name, '_*.mat');
     file_num = length(dir(file_pattern))+1;
@@ -215,6 +216,7 @@ if data_import == 1
   dest_folder = '../../processed/RationalImitation/';
   file_name = strcat(dest_folder, handsRestr_out_01_name);
   file_path = strcat(file_name, '_001.mat');
+  file_version = '_001.mat';
   if exist(file_path, 'file') == 2
     file_pattern = strcat(file_name, '_*.mat');
     file_num = length(dir(file_pattern))+1;
