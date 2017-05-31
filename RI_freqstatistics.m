@@ -1,11 +1,12 @@
 cfg               = [];
-cfg.frequency     = [4 10];
-cfg.channel       = {'F4'};
+cfg.frequency     = [3 5];
+cfg.channel       = {'C3', 'Cz', 'C4'};
 cfg.parameter     = 'powspctrm';
 cfg.method        = 'stats';
-cfg.statistic     = 'ttest2';
+cfg.statistic     = 'paired-ttest';
 cfg.alpha         = 0.05;
-cfg.avgoverfreq   = 'no';
+cfg.avgoverfreq   = 'yes';
+cfg.avgoverchan   = 'yes';
 
 data_fft_mean = cell(1,2);
 data_fft_mean{1} = data_hand_fft_mean;
