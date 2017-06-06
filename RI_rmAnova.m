@@ -1,13 +1,16 @@
 %% Determine frequencies of interest
 freq    = [6];                                                                
 
+%% Build output structure
+data_rmanova = struct;
+
 if(length(freq) > 2)
   error('Define a single frequency or specify a frequency range');
 end
 
 if(length(freq) == 1)
   [~, freqCols] = min(abs(data_hand_fft{1}.freq-freq));                     % Calculate data column of selected frequency
-  actFreq       = data_hand_fft{1}.freq(freqCols);                          % Calculate actual frequency
+  data_rmanova.actFreq = data_hand_fft{1}.freq(freqCols);                   % Calculate actual frequency
 end
 
 if(length(freq) == 2)                                                       % Calculate data column range of selected frequency range
@@ -15,12 +18,12 @@ if(length(freq) == 2)                                                       % Ca
   idxHigh = find(data_hand_fft{1}.freq <= freq(2), 1, 'last');
   if idxLow == idxHigh
     freqCols = idxLow;
-    actFreq  = data_hand_fft{1}.freq(freqCols);                             % Calculate actual frequency
+    data_rmanova.actFreq  = data_hand_fft{1}.freq(freqCols);                % Calculate actual frequency
   else
     freqCols = idxLow:idxHigh;
     actFreqLow = data_hand_fft{1}.freq(idxLow);
     actFreqHigh = data_hand_fft{1}.freq(idxHigh);
-    actFreq = [actFreqLow actFreqHigh];                                     % Calculate actual frequency range
+    data_rmanova.actFreq = [actFreqLow actFreqHigh];                        % Calculate actual frequency range
   end
 end
 
@@ -59,36 +62,50 @@ withinDesign = table(condVector, elecVector, 'VariableNames', ...
 %% Build repeated measures model
 repMeasMod = fitrm(data, 'F3Head-PzHand ~ 1', 'WithinDesign', withinDesign);
 
-%% Calculate repeated measures ANOVA and epsilon adjustment
-[rmANOVAtbl, ~, C, ~] = ranova(repMeasMod, 'WithinModel', ...
-                    'Condition*Electrode');
+%% Calculate repeated measures ANOVA, epsilon adjustments and Mauchly's 
+% test on sphericity
+[data_rmanova.table, ~, C, ~] = ranova(repMeasMod, 'WithinModel', ...
+                                       'Condition*Electrode');
            
 for i=1:1:4
   [Q,~] = qr(C{i},0);
-  Eps(i,:) = epsilon(repMeasMod, Q);
+  data_rmanova.eps(i,:) = epsilon(repMeasMod, Q);                           % epsilon adjustments
+  data_rmanova.mauchly(i,:) = mauchly(repMeasMod, Q);                       % Mauchly's test on sphericity
 end
 
-Eps.Properties.RowNames = {'(Intercept)', '(Intercept):Condition', ...
-         '(Intercept):Electrode', '(Intercept):Condition:Electrode'};
+data_rmanova.eps.Properties.RowNames = {'(Intercept)', ...
+          '(Intercept):Condition', '(Intercept):Electrode', ...
+          '(Intercept):Condition:Electrode'};
 
-comment = 'DF und MeanSq has the correct value for assumed sphericity';
+data_rmanova.mauchly.Properties.RowNames = {'(Intercept)', ...
+          '(Intercept):Condition', '(Intercept):Electrode', ...
+          '(Intercept):Condition:Electrode'};
+
+data_rmanova.comment = ...
+          'DF und MeanSq has the correct value for assumed sphericity';
 
 %% Calculate effect size
 % partial eta squared = SumSq(effect)/(SumSq(effect)+SumSq(error))
 % -------------------------------------------------------------------------
 
-rmANOVAtbl.pEtaSq = zeros(8,1);
-rmANOVAtbl.pEtaSq(1) = rmANOVAtbl.SumSq(1) / (rmANOVAtbl.SumSq(1) + ...
-                        rmANOVAtbl.SumSq(2));
-rmANOVAtbl.pEtaSq(3) = rmANOVAtbl.SumSq(3) / (rmANOVAtbl.SumSq(3) + ...
-                        rmANOVAtbl.SumSq(4));
-rmANOVAtbl.pEtaSq(5) = rmANOVAtbl.SumSq(5) / (rmANOVAtbl.SumSq(5) + ...
-                        rmANOVAtbl.SumSq(6));
-rmANOVAtbl.pEtaSq(7) = rmANOVAtbl.SumSq(7) / (rmANOVAtbl.SumSq(7) + ...
-                        rmANOVAtbl.SumSq(8));
+data_rmanova.table.pEtaSq = zeros(8,1);
+data_rmanova.table.pEtaSq(1) = data_rmanova.table.SumSq(1) / ...
+                        (data_rmanova.table.SumSq(1) + ...
+                        data_rmanova.table.SumSq(2));
+data_rmanova.table.pEtaSq(3) = data_rmanova.table.SumSq(3) /...
+                        (data_rmanova.table.SumSq(3) + ...
+                        data_rmanova.table.SumSq(4));
+data_rmanova.table.pEtaSq(5) = data_rmanova.table.SumSq(5) /...
+                        (data_rmanova.table.SumSq(5) + ...
+                        data_rmanova.table.SumSq(6));
+data_rmanova.table.pEtaSq(7) = data_rmanova.table.SumSq(7) /...
+                        (data_rmanova.table.SumSq(7) + ...
+                        data_rmanova.table.SumSq(8));
                       
 %% Clear variables                  
 % -------------------------------------------------------------------------
 
 clear freq freqCols idxLow idxHigh actFreqLow actFreqHigh numOfPart ...
       dataLength rowNum i condVector elecVector C Q
+
+clear data repMeasMod withinDesign    
