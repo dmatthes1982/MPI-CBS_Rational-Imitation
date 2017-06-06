@@ -33,5 +33,22 @@ withinDesign = table(condVector, elecVector, 'VariableNames', ...
 repMod = fitrm(data, 'F3Head-PzHand ~ 1', 'WithinDesign', withinDesign);
 rmANOVAtbl = ranova(repMod, 'WithinModel', ...
                     'Condition*Electrode');
+                  
+%% Calculate effect size
+% partial eta squared = SumSq(effect)/(SumSq(effect)+SumSq(error))
+% -------------------------------------------------------------------------
+
+rmANOVAtbl.pEtaSq = zeros(8,1);
+rmANOVAtbl.pEtaSq(1) = rmANOVAtbl.SumSq(1) / (rmANOVAtbl.SumSq(1) + ...
+                        rmANOVAtbl.SumSq(2));
+rmANOVAtbl.pEtaSq(3) = rmANOVAtbl.SumSq(3) / (rmANOVAtbl.SumSq(3) + ...
+                        rmANOVAtbl.SumSq(4));
+rmANOVAtbl.pEtaSq(5) = rmANOVAtbl.SumSq(5) / (rmANOVAtbl.SumSq(5) + ...
+                        rmANOVAtbl.SumSq(6));
+rmANOVAtbl.pEtaSq(7) = rmANOVAtbl.SumSq(7) / (rmANOVAtbl.SumSq(7) + ...
+                        rmANOVAtbl.SumSq(8));
+                      
+%% Clear variables                  
+% -------------------------------------------------------------------------
 
 clear freq freqCol numOfPart dataLength rowNum i condVector elecVector
