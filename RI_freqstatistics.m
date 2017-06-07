@@ -8,10 +8,6 @@ cfg.alpha         = 0.05;                                                   % si
 cfg.avgoverfreq   = 'yes';                                                  % average over frequencies (yes or no)
 cfg.avgoverchan   = 'no';                                                   % average over channels (yes or no)
 
-data_fft_mean = cell(1,2);                                                  % only for additional plotting purpose
-data_fft_mean{1} = data_hand_fft_mean;
-data_fft_mean{2} = data_head_fft_mean;
-
 hand_tmp = data_hand_fft;                                                   % formatting steps, remove empty datasets from cell array
 head_tmp = data_head_fft;
 eHand = cellfun('isempty', hand_tmp);
