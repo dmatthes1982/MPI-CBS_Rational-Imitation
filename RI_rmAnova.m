@@ -34,7 +34,7 @@ end
 
 if(length(freq) == 1)
   [~, freqCols] = min(abs(data_hand{1}.freq-freq));                         % Calculate data column of selected frequency
-  data_rmanova.actFreq = data_hand{1}.freq(freqCols);                       % Calculate actual frequency
+  data_rmanova.cfg.freq = data_hand{1}.freq(freqCols);                      % Calculate actual frequency
 end
 
 if(length(freq) == 2)                                                       % Calculate data column range of selected frequency range
@@ -42,12 +42,12 @@ if(length(freq) == 2)                                                       % Ca
   idxHigh = find(data_hand{1}.freq <= freq(2), 1, 'last');
   if idxLow == idxHigh
     freqCols = idxLow;
-    data_rmanova.actFreq  = data_hand{1}.freq(freqCols);                    % Calculate actual frequency
+    data_rmanova.cfg.freq  = data_hand{1}.freq(freqCols);                   % Calculate actual frequency
   else
     freqCols = idxLow:idxHigh;
     actFreqLow = data_hand{1}.freq(idxLow);
     actFreqHigh = data_hand{1}.freq(idxHigh);
-    data_rmanova.actFreq = [actFreqLow actFreqHigh];                        % Calculate actual frequency range
+    data_rmanova.cfg.freq = [actFreqLow actFreqHigh];                       % Calculate actual frequency range
   end
 end
 
@@ -61,9 +61,12 @@ else
 end
 
 if any(strcmp(cfg.channel, 'all'));
-  channel = data_hand{1}.label';
+  channel = data_hand{1}.label;
+  data_rmanova.cfg.channel = channel';
   chnNum = num2cell(1:1:length(channel));
 else
+  channel = unique(channel);                                                % Remove multiple entries
+  data_rmanova.cfg.channel = channel;
   [channel, chnNum] = RI_channelselection(channel, data_hand{1}.label);
 end
 
