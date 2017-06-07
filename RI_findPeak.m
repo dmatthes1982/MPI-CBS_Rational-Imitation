@@ -1,8 +1,10 @@
 function [ peakFreq ] = RI_findPeak( data, freqRange, component )
-%RI_FINDPEAK Summary of this function goes here
+% RI_FINDPEAK Summary of this function goes here
 %   Detailed explanation goes here
 
-%% Determine frequency range of interest
+% -------------------------------------------------------------------------
+% Determine frequency range of interest
+% -------------------------------------------------------------------------
 if(length(freqRange) ~= 2)
   error('Specify a frequency range: [freqLow freqHigh]');
 end
@@ -17,11 +19,15 @@ else
   actFreqRange = data{1}.freq(idxLow:idxHigh);                               % Calculate actual frequency range
 end
 
-%% Determine data length
+% -------------------------------------------------------------------------
+% Determine data length
+% -------------------------------------------------------------------------
 dataLength = length(data);
 peakFreq{dataLength} = [];
 
-%% Interpret component specification
+% -------------------------------------------------------------------------
+% Interpret component specification
+% -------------------------------------------------------------------------
 if isnumeric(component)
   if ~(component >= 1 && component <= length(data{1}.label))
     error('Chosen component is not available');
@@ -33,9 +39,9 @@ else
   end
 end
     
-
-%% Find largest peak in specified range
-
+% -------------------------------------------------------------------------
+% Find largest peak in specified range
+% -------------------------------------------------------------------------
 for i=1:1:dataLength
   if ~isempty(data{i})
     [pks, locs] = findpeaks(data{i}.powspctrm(component, freqCols));
@@ -47,4 +53,3 @@ for i=1:1:dataLength
     end
   end
 end
-
