@@ -5,7 +5,7 @@ MuInfants = [6 9];                                                          % de
 MuAdult = [8 13];                                                           % define here general theta-range for infants 
 
 ThetaInfants = [3.333 5.333];                                               % define here general mu-range for adults
-ThetaAdult = [3 5];                                                         % define here general theta-range for adults
+ThetaAdult = [3 7];                                                         % define here general theta-range for adults
 
 % -------------------------------------------------------------------------
 % General initialization
