@@ -45,7 +45,7 @@ for i=1:1:4                                                                 % re
       freqRange_theta = ThetaAdult;
   end
       
-  dataLength = length(data_hand_fft) - sum(cellfun(@isempty, ...            % calculate length of dataset / number of good participants
+  goodParticipants = length(data_hand_fft) - sum(cellfun(@isempty, ...            % calculate length of dataset / number of good participants
                data_hand_fft)); 
   numChn = length(data_hand_fft{1}.label);                                  % get number of channels/electrodes
   numPeaks_m_hand = zeros(1, numChn);                                       % initialize/reset temporary variables
@@ -110,7 +110,8 @@ for i=1:1:4                                                                 % re
   
   switch i
     case 1                                                                  % save results of the first dataset
-      Peaks_Infants_HandsFree_Hand.dataLength = dataLength;       
+      Peaks_Infants_HandsFree_Hand.label = data_hand_fft{1}.label';
+      Peaks_Infants_HandsFree_Hand.goodParticipants = goodParticipants;       
       Peaks_Infants_HandsFree_Hand.peaksMu = numPeaks_m_hand;
       Peaks_Infants_HandsFree_Hand.minMu = minVal_m_hand;
       Peaks_Infants_HandsFree_Hand.maxMu = maxVal_m_hand;
@@ -118,7 +119,8 @@ for i=1:1:4                                                                 % re
       Peaks_Infants_HandsFree_Hand.minTheta = minVal_t_hand;
       Peaks_Infants_HandsFree_Hand.maxTheta = maxVal_t_hand;
      
-      Peaks_Infants_HandsFree_Head.dataLength = dataLength;
+      Peaks_Infants_HandsFree_Head.label = data_head_fft{1}.label';
+      Peaks_Infants_HandsFree_Head.goodParticipants = goodParticipants;
       Peaks_Infants_HandsFree_Head.peaksMu = numPeaks_m_head;
       Peaks_Infants_HandsFree_Head.minMu = minVal_m_head;
       Peaks_Infants_HandsFree_Head.maxMu = maxVal_m_head;
@@ -126,7 +128,8 @@ for i=1:1:4                                                                 % re
       Peaks_Infants_HandsFree_Head.minTheta = minVal_t_head;
       Peaks_Infants_HandsFree_Head.maxTheta = maxVal_t_head;
     case 2                                                                  % save results of the second dataset
-      Peaks_Infants_HandsRestr_Hand.dataLength = dataLength;
+      Peaks_Infants_HandsRestr_Hand.label = data_hand_fft{1}.label';
+      Peaks_Infants_HandsRestr_Hand.goodParticipants = goodParticipants;
       Peaks_Infants_HandsRestr_Hand.peaksMu = numPeaks_m_hand;
       Peaks_Infants_HandsRestr_Hand.minMu = minVal_m_hand;
       Peaks_Infants_HandsRestr_Hand.maxMu = maxVal_m_hand;
@@ -134,7 +137,8 @@ for i=1:1:4                                                                 % re
       Peaks_Infants_HandsRestr_Hand.minTheta = minVal_t_hand;
       Peaks_Infants_HandsRestr_Hand.maxTheta = maxVal_t_hand;
       
-      Peaks_Infants_HandsRestr_Head.dataLength = dataLength;
+      Peaks_Infants_HandsRestr_Head.label = data_head_fft{1}.label';
+      Peaks_Infants_HandsRestr_Head.goodParticipants = goodParticipants;
       Peaks_Infants_HandsRestr_Head.peaksMu = numPeaks_m_head;
       Peaks_Infants_HandsRestr_Head.minMu = minVal_m_head;
       Peaks_Infants_HandsRestr_Head.maxMu = maxVal_m_head;
@@ -142,7 +146,8 @@ for i=1:1:4                                                                 % re
       Peaks_Infants_HandsRestr_Head.minTheta = minVal_t_head;
       Peaks_Infants_HandsRestr_Head.maxTheta = maxVal_t_head;
     case 3                                                                  % save results of the third dataset
-      Peaks_Adults_HandsFree_Hand.dataLength = dataLength;
+      Peaks_Adults_HandsFree_Hand.label = data_hand_fft{1}.label';
+      Peaks_Adults_HandsFree_Hand.goodParticipants = goodParticipants;
       Peaks_Adults_HandsFree_Hand.peaksMu = numPeaks_m_hand;
       Peaks_Adults_HandsFree_Hand.minMu = minVal_m_hand;
       Peaks_Adults_HandsFree_Hand.maxMu = maxVal_m_hand;
@@ -150,7 +155,8 @@ for i=1:1:4                                                                 % re
       Peaks_Adults_HandsFree_Hand.minTheta = minVal_t_hand;
       Peaks_Adults_HandsFree_Hand.maxTheta = maxVal_t_hand;
       
-      Peaks_Adults_HandsFree_Head.dataLength = dataLength;
+      Peaks_Adults_HandsFree_Head.label = data_head_fft{1}.label';
+      Peaks_Adults_HandsFree_Head.goodParticipants = goodParticipants;
       Peaks_Adults_HandsFree_Head.peaksMu = numPeaks_m_head;
       Peaks_Adults_HandsFree_Head.minMu = minVal_m_head;
       Peaks_Adults_HandsFree_Head.maxMu = maxVal_m_head;
@@ -158,7 +164,8 @@ for i=1:1:4                                                                 % re
       Peaks_Adults_HandsFree_Head.minTheta = minVal_t_head;
       Peaks_Adults_HandsFree_Head.maxTheta = maxVal_t_head;
     case 4                                                                  % save results of the fourth dataset
-      Peaks_Adults_HandsRestr_Hand.dataLength = dataLength;
+      Peaks_Adults_HandsRestr_Hand.label = data_hand_fft{1}.label';
+      Peaks_Adults_HandsRestr_Hand.goodParticipants = goodParticipants;
       Peaks_Adults_HandsRestr_Hand.peaksMu = numPeaks_m_hand;
       Peaks_Adults_HandsRestr_Hand.minMu = minVal_m_hand;
       Peaks_Adults_HandsRestr_Hand.maxMu = maxVal_m_hand;
@@ -166,7 +173,8 @@ for i=1:1:4                                                                 % re
       Peaks_Adults_HandsRestr_Hand.minTheta = minVal_t_hand;
       Peaks_Adults_HandsRestr_Hand.maxTheta = maxVal_t_hand;
       
-      Peaks_Adults_HandsRestr_Head.dataLength = dataLength;
+      Peaks_Adults_HandsRestr_Head.label = data_head_fft{1}.label';
+      Peaks_Adults_HandsRestr_Head.goodParticipants = goodParticipants;
       Peaks_Adults_HandsRestr_Head.peaksMu = numPeaks_m_head;
       Peaks_Adults_HandsRestr_Head.minMu = minVal_m_head;
       Peaks_Adults_HandsRestr_Head.maxMu = maxVal_m_head;
@@ -178,8 +186,8 @@ for i=1:1:4                                                                 % re
   clear data_hand_fft data_head_fft trialsAveraged;                         % remove loaded dataset from workspace
 end
 
-clear i j freqRange_mu freqRange_theta peakFreq ...                         % delete temporary variables
-      dataLength numChn numPeaks_m_hand minVal_m_hand maxVal_m_hand ...
+clear i j freqRange_mu freqRange_theta peakFreq maxVal_m_hand ...           % delete temporary variables
+      goodParticipants numChn numPeaks_m_hand minVal_m_hand ...
       numPeaks_t_hand minVal_t_hand maxVal_t_hand numPeaks_m_head ...
       minVal_m_head maxVal_m_head numPeaks_t_head minVal_t_head ...
       maxVal_t_head srcFolder infHandsFreeFile infHandsRestrFile ...
