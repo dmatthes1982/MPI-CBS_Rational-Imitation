@@ -1,6 +1,35 @@
-function [ peakFreq ] = RI_findPeak( data, freqRange, component )
-% RI_FINDPEAK Summary of this function goes here
-%   Detailed explanation goes here
+function [ peakFreq ] = RI_findPeak( cfg, data )
+% RI_FINDPEAK searches for peaks in a certain passband of a certain
+% component. The most prominent peak will be returned.
+%
+% Use as
+%   [ peakFreq ] = RI_findPeak( cfg, data )
+% where the input data is the result from RI_PSDANALYSIS
+%
+% The configuration options are
+%    cfg.freq      = frequency range: [begin end], uinit = Hz
+%    cfg.component = a certain component (i.e. specified as label ('C3' or 'P4') or a decimal number (1 or 6))
+%
+% See also FINDPEAKS
+
+% Copyright (C) 2017, Daniel Matthes, MPI CBS
+
+% -------------------------------------------------------------------------
+% Check input variables
+% -------------------------------------------------------------------------
+if isfield(cfg, 'freqRange')
+  freqRange = cfg.freqRange;
+else
+  error('Frequency range is not defined in cfg');
+end
+
+if isfield(cfg, 'component')
+  
+  component = cfg.component;
+else
+  error('A certain Component is not defined in cfg');
+end
+
 
 % -------------------------------------------------------------------------
 % Determine frequency range of interest

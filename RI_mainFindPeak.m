@@ -61,10 +61,12 @@ for i=1:1:4                                                                 % re
   minVal_t_head = zeros(1, numChn);
   maxVal_t_head = zeros(1, numChn);
   
+  cfg = [];
   
   for j=1:1:numChn                                                          % repeat this subloop for all channels/electrodes 
-    peakFreq = cell2mat(RI_findPeak(data_hand_fft, freqRange_mu, ...        % determine peaks in the mu-range of all participants (condition hand)
-                        data_hand_fft{1}.label{j}));
+    cfg.freqRange = freqRange_mu;
+    cfg.component = data_hand_fft{1}.label{j};
+    peakFreq = cell2mat(RI_findPeak(cfg, data_hand_fft));                   % determine peaks in the mu-range of all participants (condition hand)
     numPeaks_m_hand(j) = length(peakFreq);                                  % get the number of the determined peaks
     if (numPeaks_m_hand(j))                                                 % calculate minimum and maximum peaks are found
       minVal_m_hand(j) = min(peakFreq);
@@ -74,8 +76,9 @@ for i=1:1:4                                                                 % re
       maxVal_m_hand(j) = NaN; 
     end
     
-    peakFreq = cell2mat(RI_findPeak(data_head_fft, freqRange_mu, ...        % determine peaks in the mu-range of all participants (condition head)
-                        data_head_fft{1}.label{j}));
+    cfg.freqRange = freqRange_mu;
+    cfg.component = data_head_fft{1}.label{j};   
+    peakFreq = cell2mat(RI_findPeak(cfg, data_head_fft));                   % determine peaks in the mu-range of all participants (condition head)
     numPeaks_m_head(j) = length(peakFreq);                                  % get the number of the determined peaks            
     if(numPeaks_m_head(j))                                                  % calculate minimum and maximum peaks are found
       minVal_m_head(j) = min(peakFreq);
@@ -85,8 +88,9 @@ for i=1:1:4                                                                 % re
       maxVal_m_head(j) = NaN;
     end
     
-    peakFreq = cell2mat(RI_findPeak(data_hand_fft, freqRange_theta, ...     % determine peaks in the theta-range of all participants (condition hand)
-                        data_hand_fft{1}.label{j}));
+    cfg.freqRange = freqRange_theta;
+    cfg.component = data_hand_fft{1}.label{j};
+    peakFreq = cell2mat(RI_findPeak(cfg, data_hand_fft));                   % determine peaks in the theta-range of all participants (condition hand)
     numPeaks_t_hand(j) = length(peakFreq);                                  % get the number of the determined peaks
     if(numPeaks_t_hand(j))                                                  % calculate minimum and maximum peaks are found 
       minVal_t_hand(j) = min(peakFreq);
@@ -96,8 +100,9 @@ for i=1:1:4                                                                 % re
       maxVal_t_hand(j) = NaN;
     end
     
-    peakFreq = cell2mat(RI_findPeak(data_head_fft, freqRange_theta, ...     % determine peaks in the theta-range of all participants (condition head)
-                        data_head_fft{1}.label{j}));
+    cfg.freqRange = freqRange_theta;
+    cfg.component = data_head_fft{1}.label{j};
+    peakFreq = cell2mat(RI_findPeak(cfg, data_head_fft));                   % determine peaks in the theta-range of all participants (condition head)
     numPeaks_t_head(j) = length(peakFreq);                                  % get the number of the determined peaks
     if (numPeaks_t_head(j))                                                 % calculate minimum and maximum peaks are found
       minVal_t_head(j) = min(peakFreq);
@@ -191,4 +196,4 @@ clear i j freqRange_mu freqRange_theta peakFreq maxVal_m_hand ...           % de
       numPeaks_t_hand minVal_t_hand maxVal_t_hand numPeaks_m_head ...
       minVal_m_head maxVal_m_head numPeaks_t_head minVal_t_head ...
       maxVal_t_head srcFolder infHandsFreeFile infHandsRestrFile ...
-      adHandsFreeFile adHandsRestrFile  
+      adHandsFreeFile adHandsRestrFile cfg 
