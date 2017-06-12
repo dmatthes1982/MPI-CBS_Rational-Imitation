@@ -60,7 +60,7 @@ else
   error('Channels of interest are not defined in cfg');
 end
 
-if any(strcmp(cfg.channel, 'all'));
+if any(strcmp(cfg.channel, 'all'))
   channel = data_hand{1}.label;
   data_rmanova.cfg.channel = channel';
   chnNum = num2cell(1:1:length(channel));
@@ -93,6 +93,30 @@ for i=1:1:numOfElec
   end
 end
 
+% -------------------------------------------------------------------------
+% Calculate descriptive statistic
+% -------------------------------------------------------------------------
+chanNames{2*numOfElec} = [];
+for i=1:1:numOfElec
+  chanNames{i}            = strcat(channel{i}, 'Head');
+  chanNames{i+numOfElec}  = strcat(channel{i}, 'Hand');
+end
+stats = array2table(zeros(2, 2*numOfElec), 'VariableNames', chanNames);     % Generate descriptive statistics table
+stats.Properties.RowNames = {'mean', 'standard deviation'};
+
+matrixHead = cat(3, powspctrmHead{:});
+matrixHand = cat(3, powspctrmHand{:});
+
+for i=1:1:numOfElec
+  stats(1,i) = num2cell(mean(mean(matrixHead(i,freqCols,:),2),3));
+  stats(2,i) = num2cell(std(mean(matrixHead(i,freqCols,:),2),0,3));
+  stats(1,i+numOfElec) = num2cell(mean(mean(matrixHand(i, ...
+                                  freqCols,:),2),3));
+  stats(2,i+numOfElec) = num2cell(std(mean(matrixHand(i, ...
+                                  freqCols,:),2),0,3));
+end
+
+data_rmanova.stats = stats;
 
 % -------------------------------------------------------------------------
 % Create data table and between-subjects model of reapeated measure model
