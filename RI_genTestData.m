@@ -22,16 +22,16 @@ for i=1:1:dataLength
   fprintf('%02d\n', i);
   if ~isempty(data_hand{i})
     for j=1:1:trialsAveraged(i).hand
-      sig_orig = ft_freqsimulation(cfg);
       for k=1:1:channels
+        sig_orig = ft_freqsimulation(cfg);
         data_hand{i}.trial{j}(k,:) = sig_orig.trial{1}(1,:);
       end
     end
   end
   if ~isempty(data_head{i})
     for j=1:1:trialsAveraged(i).head
-      sig_orig = ft_freqsimulation(cfg);
       for k=1:1:channels
+        sig_orig = ft_freqsimulation(cfg);
         data_head{i}.trial{j}(k,:) = sig_orig.trial{1}(1,:);
       end
     end    
@@ -54,8 +54,8 @@ for i=1:1:dataLength
   cfg.s3.ampl = 20;
   if ~isempty(data_hand{i})
     for j=1:1:trialsAveraged(i).head
-      sig_theta = ft_freqsimulation (cfg);
       for k=posFrontal
+        sig_theta = ft_freqsimulation (cfg);
         data_head{i}.trial{j}(k,:) = sig_theta.trial{1}(1,:);
       end
     end
@@ -64,8 +64,8 @@ for i=1:1:dataLength
   cfg.s3.ampl = 60;
   if ~isempty(data_head{i})
     for j=1:1:trialsAveraged(i).head
-      sig_alpha = ft_freqsimulation (cfg);
       for k=posCentral
+        sig_alpha = ft_freqsimulation (cfg);
         data_head{i}.trial{j}(k,:) = sig_alpha.trial{1}(1,:);
       end
     end    
