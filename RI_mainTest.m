@@ -42,7 +42,7 @@ clear fig_01_title fig_02_title fig_03_title fig_04_title fig_05_title ...
       pdf_01_title pdf_02_title pdf_03_title pdf_04_title pdf_05_title ...
       data_fft_mean
 
-%% calculate paired t-test
+%% calculate paired t-tests
 
 cfg = [];
 cfg.frequency = 10;
@@ -67,6 +67,17 @@ ptttest_4Hz_F3 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
 
 clear cfg;
 
+%% calculate rmANOVAs
+
+cfg.freq = 10;
+cfg.channel = 'all';
+
+rmAnova_10Hz = RI_rmAnova(cfg, data_hand_fft, data_head_fft);
+
+cfg.freq = 4;
+cfg.channel = 'all';
+
+rmAnova_4Hz = RI_rmAnova(cfg, data_hand_fft, data_head_fft);
 
 
 
