@@ -1,11 +1,11 @@
-function RI_psdPlot( data_in, fig_title, pdf_title )
-% RI_PSDPLOT plots the power spectrum of all nine electrodes from different
-% datasets.
+function RI_psdPlot2( data_in, fig_title, pdf_title )
+% RI_PSDPLOT2 plots the mean power spectrum of frontal and central 
+% electrodes from different datasets.
 %
 % Use as, i.e.:
-%   RI_psdPlot(data_hand_fft, 'Fig. Title', 'File Title')
+%   RI_psdPlot2(data_hand_fft, 'Fig. Title', 'File Title')
 %              or
-%   RI_psdPlot({data_hand_fft_mean, data_head_fft_mean}, 'Fig. Title', 'File Title')
+%   RI_psdPlot2({data_hand_fft_mean, data_head_fft_mean}, 'Fig. Title', 'File Title')
 %
 % The first example refers to data cells with multiple data structures and
 % the second example to list of single data structures.
@@ -16,7 +16,7 @@ function RI_psdPlot( data_in, fig_title, pdf_title )
 %
 % Input data ist the result from RI_PSDANALYSIS or from RI_AVERAGEPEOPLE
 %
-% See also RI_PSDANALYSIS, RI_AVERAGEPEOPLE, RI_PSDPLOT2 
+% See also RI_PSDANALYSIS, RI_AVERAGEPEOPLE, RI_PSDPLOT
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
@@ -36,45 +36,32 @@ q.TitlePosition = 'centerbottom';
 q.FontSize = 12;
 q.FontWeight = 'bold';
 
-for a=1:1:9
-  subplot(3,3,a, 'Parent', p);
+for a=1:1:2
+  subplot(1,2,a, 'Parent', p);
   xlabel('frequency (Hz)');
   ylabel('power/frequency (dB/Hz)');
   hold on;
 end
 
-subplot(3,3,1, 'Parent', p);
-title('Power Spectrum of F3');
-subplot(3,3,2, 'Parent', p);
-title('Power Spectrum of F4');
-subplot(3,3,3, 'Parent', p);
-title('Power Spectrum of Fz');
-subplot(3,3,4, 'Parent', p);
-title('Power Spectrum of C3');
-subplot(3,3,5, 'Parent', p);
-title('Power Spectrum of C4');
-subplot(3,3,6, 'Parent', p);
-title('Power Spectrum of Cz');
-subplot(3,3,7, 'Parent', p);
-title('Power Spectrum of P3');
-subplot(3,3,8, 'Parent', p);
-title('Power Spectrum of P4');
-subplot(3,3,9, 'Parent', p);
-title('Power Spectrum of Pz');
+subplot(1,2,1, 'Parent', p);
+title('Power Spectrum of F*');
+subplot(1,2,2, 'Parent', p);
+title('Power Spectrum of C*');
+
 
 if lengthInput > 1
   for i=1:1:lengthInput
     if ~isempty(data_in{i})
-      for j=1:1:9
-        subplot(3,3,j);
-        plot(data_in{i}.freq(1:46), 10*log(data_in{i}.powspctrm(j,1:46)));
+      for j=1:1:2
+        subplot(1,2,j);
+        plot(data_in{i}.freq(1:46), 10*log(mean(data_in{i}.powspctrm((j-1)*3+1:j*3,1:46),1)));
       end
     end
   end
 else
-  for j=1:1:9
-    subplot(3,3,j);
-    plot(data_in.freq(1:46), 10*log(data_in.powspctrm(j,1:46)));
+  for j=1:1:2
+    subplot(1,2,j);
+    plot(data_in.freq(1:46), 10*log(mean(data_in.powspctrm((j-1)*3+1:j*3,1:46),1)));
   end
 end
 
@@ -83,8 +70,8 @@ end
 % -------------------------------------------------------------------------
 y_min = 2000;                                                                 
 y_max = 0;
-for sub=1:1:9
-  subplot(3,3,sub);
+for sub=1:1:2
+  subplot(1,2,sub);
   y_limits = get(gca,'ylim');
   if y_limits(1) < y_min
     y_min = y_limits(1);
@@ -94,8 +81,8 @@ for sub=1:1:9
   end
 end
 
-for sub=1:1:9
-  subplot(3,3,sub);
+for sub=1:1:2
+  subplot(1,2,sub);
   ylim([y_min y_max]);
 end
 
