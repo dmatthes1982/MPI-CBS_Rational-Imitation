@@ -7,9 +7,9 @@ function [data_pttest] = RI_freqstatistics(cfg, data_hand, data_head)
 %
 % The configuration options are
 %    cfg.frequency    = number or range or 'all' (i.e. 6 or [begin end]), unit = Hz     (default = 'all')
-%    cfg.channel      = 'all' or a specific selection (i.e. {'C3', 'P*', '*4'})          (default = 'all')
-%    cfg.avgoverfreq  = 'no' or 'yes'                                                    (default = 'no')
-%    cfg.avgoverchan  = 'no' or 'yes'                                                    (default = 'no')
+%    cfg.channel      = 'all' or a specific selection (i.e. {'C3', 'P*', '*4'})         (default = 'all')
+%    cfg.avgoverfreq  = 'no' or 'yes'                                                   (default = 'no')
+%    cfg.avgoverchan  = 'no' or 'yes'                                                   (default = 'no')
 %
 % This function requires the fieldtrip toolbox.
 %

@@ -46,24 +46,24 @@ clear fig_01_title fig_02_title fig_03_title fig_04_title fig_05_title ...
 
 cfg = [];
 cfg.frequency = 10;
-cfg.channel = 'C4';
+cfg.channel = 'C3';
 
-ptttest_10Hz_C4 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
+ptttest_10Hz_C3 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
 
 cfg.frequency = 10;
-cfg.channel = 'F3';
+cfg.channel = 'F4';
 
-ptttest_10Hz_F3 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
-
-cfg.frequency = 4;
-cfg.channel = 'C4';
-
-ptttest_4Hz_C4 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
+ptttest_10Hz_F4 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
 
 cfg.frequency = 4;
-cfg.channel = 'F3';
+cfg.channel = 'C3';
 
-ptttest_4Hz_F3 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
+ptttest_4Hz_C3 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
+
+cfg.frequency = 4;
+cfg.channel = 'F4';
+
+ptttest_4Hz_F4 = RI_freqstatistics(cfg, data_hand_fft, data_head_fft);
 
 clear cfg;
 
@@ -79,7 +79,4 @@ cfg.channel = 'all';
 
 rmAnova_4Hz = RI_rmAnova(cfg, data_hand_fft, data_head_fft);
 
-
-
-
-
+clear cfg;

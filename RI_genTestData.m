@@ -18,7 +18,7 @@ cfg.s3.ampl = 20;
 cfg.noise.ampl = 10;
 cfg.showcallinfo = 'no';
 
-for i=1:1:dataLength
+parfor i=1:1:dataLength
   fprintf('%02d\n', i);
   if ~isempty(data_hand{i})
     for j=1:1:trialsAveraged(i).hand
@@ -38,34 +38,55 @@ for i=1:1:dataLength
   end  
 end
 
-labelFrontal = {'F3' 'F4' 'Fz'};
-labelCentral = {'C3' 'C4' 'Cz'};
-posFrontal = zeros(1,3);
-posCentral = zeros(1,3);
+labelFrontal = {'F4'};
+labelCentral = {'C3'};
+posFrontal = zeros(1,1);
+posCentral = zeros(1,1);
 
-for i=1:1:3
+for i=1:1:length(labelFrontal)
   posFrontal(i) = find(strcmp(data_head{1}.label, labelFrontal{i}));
   posCentral(i) = find(strcmp(data_head{1}.label, labelCentral{i}));
 end
 
-for i=1:1:dataLength
+cfgThetaH = cfg;
+cfgThetaH.s2.ampl = 72;
+cfgThetaH.s3.ampl = 20;
+
+cfgAlphaH = cfg;
+cfgAlphaH.s2.ampl = 70;
+cfgAlphaH.s3.ampl = 21;
+
+cfgThetaL = cfg;
+cfgThetaL.s2.ampl = 68;
+cfgThetaL.s3.ampl = 20;
+
+cfgAlphaL = cfg;
+cfgAlphaL.s2.ampl = 70;
+cfgAlphaL.s3.ampl = 19;
+
+
+parfor i=1:1:dataLength
   fprintf('%02d\n', i);
-  cfg.s2.ampl = 120;
-  cfg.s3.ampl = 20;
   if ~isempty(data_hand{i})
-    for j=1:1:trialsAveraged(i).head
+    for j=1:1:trialsAveraged(i).hand
       for k=posFrontal
-        sig_theta = ft_freqsimulation (cfg);
-        data_head{i}.trial{j}(k,:) = sig_theta.trial{1}(1,:);
+        sig_theta = ft_freqsimulation(cfgThetaH);
+        data_hand{i}.trial{j}(k,:) = sig_theta.trial{1}(1,:);
+      end
+      for k=posCentral
+        sig_alpha = ft_freqsimulation(cfgAlphaL);
+        data_hand{i}.trial{j}(k,:) = sig_alpha.trial{1}(1,:);
       end
     end
   end
-  cfg.s2.ampl = 70;
-  cfg.s3.ampl = 60;
   if ~isempty(data_head{i})
     for j=1:1:trialsAveraged(i).head
+      for k=posFrontal
+        sig_theta = ft_freqsimulation(cfgThetaL);
+        data_head{i}.trial{j}(k,:) = sig_theta.trial{1}(1,:);
+      end
       for k=posCentral
-        sig_alpha = ft_freqsimulation (cfg);
+        sig_alpha = ft_freqsimulation(cfgAlphaH);
         data_head{i}.trial{j}(k,:) = sig_alpha.trial{1}(1,:);
       end
     end    
@@ -74,4 +95,4 @@ end
 
 clear i j k sig_alpha sig_theta posFrontal posCentral channels ...
       dataLength sig_theta sig_alpha freqSamp trialLength labelFrontal ...
-      labelCentral cfg sig_orig
+      labelCentral cfg cfgThetaH cfgAlphaH cfgThetaL cfgAlphaL sig_orig
