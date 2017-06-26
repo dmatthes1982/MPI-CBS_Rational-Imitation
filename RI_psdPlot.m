@@ -1,26 +1,86 @@
-function RI_psdPlot( data_in, fig_title, pdf_title )
-% RI_PSDPLOT plots the power spectrum of all nine electrodes from different
-% datasets.
+function RI_psdPlot( cfg, data )
+% RI_PSDPLOT is a function, which can be used to generate a figures with
+% various power spectral density plots.
 %
-% Use as, i.e.:
-%   RI_psdPlot(data_hand_fft, 'Fig. Title', 'File Title')
-%              or
-%   RI_psdPlot({data_hand_fft_mean, data_head_fft_mean}, 'Fig. Title', 'File Title')
+% Use as
+%   RI_psdPlot(cfg, data) 
+% or
+%   RI_psdPlot(cfg, [data_a, data_b])
+% or
+%   RI_psdPlot(cfg, {data1, data2})
 %
-% The first example refers to data cells with multiple data structures and
-% the second example to list of single data structures.
+% where data, data_a and data_b are a cell arrays of multiple datasets and 
+% data1 and data2 are single datasets. They can be results of 
+% RI_PSDANALYSIS or from RI_AVERAGEPEOPLE
 %
-% If you want combine two sets of data cells, you have to call this
-% function in the following order
-%   RI_psdPlot([data_hand_fft, data_head_fft], 'Fig. Title', 'File Title')
+% The configuration can have the following parameters:
+%   cfg.fig_title = 'title of figure' (default: Power spectral density)
+%   cfg.pdf_title = 'tite of output file' (default: PSD-plot)
+%   cfg.channels  = 1xN cell array with selection of channels or 'all' (default = 'all');
+%                   i.e. {'P3', {'F3', 'F4'}, {'Pz', 'Cz', 'Fz'}},
+%                   channels within curly brackets will be averaged 
 %
-% Input data ist the result from RI_PSDANALYSIS or from RI_AVERAGEPEOPLE
-%
-% See also RI_PSDANALYSIS, RI_AVERAGEPEOPLE, RI_PSDPLOT2 
+% See also RI_PSDANALYSIS, RI_AVERAGEPEOPLE
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
-lengthInput = length(data_in);
+% -------------------------------------------------------------------------
+% Get and check config options
+% -------------------------------------------------------------------------
+
+default_label = {'F3'; 'Fz'; 'F4'; 'C3'; 'Cz'; 'C4'; 'P3'; 'Pz'; 'P4'};
+
+fig_title     = ft_getopt(cfg, 'fig_title', 'Power spectral density');
+pdf_title     = ft_getopt(cfg, 'pdf_title', 'PSD-plot');
+channels      = ft_getopt(cfg, 'channels', 'all');
+
+if ~iscell(channels)
+  numOfChan = 9;
+  channels = default_label';
+  subX = 3; subY = 3;
+else
+  numOfChan = length(channels);
+
+  if numOfChan < 1 || numOfChan > 9                                         % check number of channels
+    error('The numbers of channels have to be between 1 and 9.');
+  else
+    switch numOfChan
+      case 1
+        subX = 1; subY = 1;
+      case 2
+        subX = 2; subY = 1;
+      case 3
+        subX = 1; subY = 3;
+      case 4
+        subX = 2; subY = 2;
+      case {5, 6}
+        subX = 3; subY = 2;
+      case {7, 8, 9}
+        subX = 3; subY = 3;      
+    end
+  end
+  
+  for i=1:1:numOfChan                                                       % check channel labels
+    if ~iscell(channels{i})
+      if isempty(any(strcmp(default_label, channels{i})))
+        error('Channel: %s does not exist.', channels{i});
+      end
+    else
+      chanLength = length(channels{i});
+      for j=1:1:chanLength
+        if isempty(any(strcmp(default_label, channels{i}{j})))
+        error('Channel: %s does not exist.', channels{i}{j});
+        end
+      end
+    end
+  end
+end
+
+% -------------------------------------------------------------------------
+% Get data length
+% -------------------------------------------------------------------------
+
+lengthInput = length(data);
 
 % -------------------------------------------------------------------------
 % Create panels for headline and the subplots
@@ -36,69 +96,74 @@ q.TitlePosition = 'centerbottom';
 q.FontSize = 12;
 q.FontWeight = 'bold';
 
-for a=1:1:9
-  subplot(3,3,a, 'Parent', p);
+for i=1:1:numOfChan
+  subplot(subX, subY, i, 'Parent', p);
   xlabel('frequency (Hz)');
   ylabel('power/frequency (dB/Hz)');
   hold on;
+  if ~iscell(channels{i})
+    title(['PSD of ', channels{i}]);
+  else
+    chanLength = length(channels{i});
+    if chanLength == 2
+      title(['Mean PSD of ', channels{i}{1}, ' and ', ...
+            channels{i}{2}]);
+    else
+      titleString = 'Mean PSD of ';
+      for j = 1:1:chanLength - 2
+        titleString = [titleString, channels{i}{j}, ', '];
+      end
+      title([titleString, channels{i}{chanLength - 1}, ' and ', ...
+            channels{i}{chanLength}]); 
+    end
+  end
 end
 
-subplot(3,3,1, 'Parent', p);
-title('Power Spectrum of F3');
-subplot(3,3,2, 'Parent', p);
-title('Power Spectrum of F4');
-subplot(3,3,3, 'Parent', p);
-title('Power Spectrum of Fz');
-subplot(3,3,4, 'Parent', p);
-title('Power Spectrum of C3');
-subplot(3,3,5, 'Parent', p);
-title('Power Spectrum of C4');
-subplot(3,3,6, 'Parent', p);
-title('Power Spectrum of Cz');
-subplot(3,3,7, 'Parent', p);
-title('Power Spectrum of P3');
-subplot(3,3,8, 'Parent', p);
-title('Power Spectrum of P4');
-subplot(3,3,9, 'Parent', p);
-title('Power Spectrum of Pz');
+% -------------------------------------------------------------------------
+% Convert channel strings in numbers
+% -------------------------------------------------------------------------
+chanNumbers{numOfChan} = [];
 
 if lengthInput > 1
+  label = data{1}.label;
+else
+  label = data.label;
+end
+
+for i=1:1:numOfChan
+  if ~iscell(channels{i})
+    chanNumbers{i} = find(strcmp(label, channels{i}));
+  else
+    chanLength = length(channels{i});
+    clear tmp;
+    tmp = cell(1, chanLength);
+    for j=1:1:chanLength
+      tmp{j} = find(strcmp(label, channels{i}{j}));
+    end
+    chanNumbers{i} = cell2mat(tmp);
+  end
+end
+
+% -------------------------------------------------------------------------
+% Plot graphs
+% -------------------------------------------------------------------------
+if lengthInput > 1
   for i=1:1:lengthInput
-    if ~isempty(data_in{i})
-      for j=1:1:9
-        subplot(3,3,j);
-        plot(data_in{i}.freq(1:46), 10*log(data_in{i}.powspctrm(j,1:46)));
+    if ~isempty(data{i})
+      for j=1:1:numOfChan
+        subplot(subX, subY, j);
+        plot(data{i}.freq(1:46), 10*log(mean( ...
+             data{i}.powspctrm(chanNumbers{j},1:46), 1)));
       end
     end
   end
 else
-  for j=1:1:9
-    subplot(3,3,j);
-    plot(data_in.freq(1:46), 10*log(data_in.powspctrm(j,1:46)));
+  for j=1:1:numOfChan
+    subplot(subX, subY, j);
+    plot(data.freq(1:46), 10*log(mean( ...
+         data.powspctrm(chanNumbers{j},1:46), 1)));
   end
 end
-
-% -------------------------------------------------------------------------
-% Resize y-axis subplots to common base
-% -------------------------------------------------------------------------
-y_min = 2000;                                                                 
-y_max = 0;
-for sub=1:1:9
-  subplot(3,3,sub);
-  y_limits = get(gca,'ylim');
-  if y_limits(1) < y_min
-    y_min = y_limits(1);
-  end
-  if y_limits(2) > y_max
-    y_max = y_limits(2);
-  end
-end
-
-for sub=1:1:9
-  subplot(3,3,sub);
-  ylim([y_min y_max]);
-end
-
 
 % -------------------------------------------------------------------------
 % Save graphic as pdf-File
@@ -120,4 +185,3 @@ end
 print(gcf, '-dpdf', file_path);
 
 end
-
