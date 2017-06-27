@@ -18,7 +18,12 @@ function RI_psdPlot( cfg, data )
 %   cfg.pdf_title = 'tite of output file' (default: PSD-plot)
 %   cfg.channels  = 1xN cell array with selection of channels or 'all' (default = 'all');
 %                   i.e. {'P3', {'F3', 'F4'}, {'Pz', 'Cz', 'Fz'}},
-%                   channels within curly brackets will be averaged 
+%                   channels within curly brackets will be averaged
+%   cfg.fontName  = font name (default: 'Helvetica');
+%   cfg.titleSize = font size of figure title (default: 12)
+%   cfg.subSize   = font size of graph title (default: 11)
+%   cfg.labelSize = font size of labels (default: 11)
+%   cfg.axisSize  = font size of units (default: 10)
 %
 % See also RI_PSDANALYSIS, RI_AVERAGEPEOPLE
 
@@ -33,6 +38,11 @@ default_label = {'F3'; 'Fz'; 'F4'; 'C3'; 'Cz'; 'C4'; 'P3'; 'Pz'; 'P4'};
 fig_title     = ft_getopt(cfg, 'fig_title', 'Power spectral density');
 pdf_title     = ft_getopt(cfg, 'pdf_title', 'PSD-plot');
 channels      = ft_getopt(cfg, 'channels', 'all');
+fontName      = ft_getopt(cfg, 'fontName', 'Helvetica');
+titleSize     = ft_getopt(cfg, 'titleSize', 12);
+subSize       = ft_getopt(cfg, 'subSize', 11);
+labelSize     = ft_getopt(cfg, 'labelSize', 11);
+axisSize      = ft_getopt(cfg, 'axisSize', 10);
 
 if ~iscell(channels)
   numOfChan = 9;
@@ -93,30 +103,38 @@ q = uipanel('Parent', f, 'BackgroundColor', 'white', 'BorderType', ...      % cr
 
 q.Title = fig_title; 
 q.TitlePosition = 'centerbottom'; 
-q.FontSize = 12;
+q.FontSize = titleSize;
 q.FontWeight = 'bold';
+q.FontName = fontName;
 
 for i=1:1:numOfChan
   subplot(subX, subY, i, 'Parent', p);
-  xlabel('frequency (Hz)');
-  ylabel('power/frequency (dB/Hz)');
+  ax = gca;
+  ax.FontSize = axisSize;
+  ax.FontName = fontName;
+  xlabel('frequency (Hz)', 'FontSize', labelSize, ...
+                          'FontName', fontName);
+  ylabel('power/frequency (dB/Hz)', 'FontSize', labelSize, ...
+                                    'FontName', fontName);
   hold on;
   if ~iscell(channels{i})
-    title(['PSD of ', channels{i}]);
+    titleString = ['PSD of ', channels{i}];
   else
     chanLength = length(channels{i});
     if chanLength == 2
-      title(['Mean PSD of ', channels{i}{1}, ' and ', ...
-            channels{i}{2}]);
+      titleString = ['Mean PSD of ', channels{i}{1}, ' and ', ...
+            channels{i}{2}];
     else
       titleString = 'Mean PSD of ';
       for j = 1:1:chanLength - 2
         titleString = [titleString, channels{i}{j}, ', '];
       end
-      title([titleString, channels{i}{chanLength - 1}, ' and ', ...
-            channels{i}{chanLength}]); 
+      titleString = [titleString, channels{i}{chanLength - 1}, ' and ', ...
+            channels{i}{chanLength}]; 
     end
   end
+  title(titleString, 'Fontsmoothing', 'off', 'FontSize', subSize, ...
+                    'FontName', fontName, 'FontWeight', 'bold');
 end
 
 % -------------------------------------------------------------------------
