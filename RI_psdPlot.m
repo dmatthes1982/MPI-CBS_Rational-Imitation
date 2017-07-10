@@ -25,6 +25,8 @@ function RI_psdPlot( cfg, data )
 %   cfg.labelSize = font size of labels (default: 11)
 %   cfg.axisSize  = font size of units (default: 10)
 %
+% This function requires the fieldtrip toolbox
+%
 % See also RI_PSDANALYSIS, RI_AVERAGEPEOPLE
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
@@ -127,10 +129,10 @@ for i=1:1:numOfChan
     else
       titleString = 'Mean PSD of ';
       for j = 1:1:chanLength - 2
-        titleString = [titleString, channels{i}{j}, ', '];
+        titleString = [titleString, channels{i}{j}, ', ']; %#ok<AGROW>
       end
       titleString = [titleString, channels{i}{chanLength - 1}, ' and ', ...
-            channels{i}{chanLength}]; 
+            channels{i}{chanLength}];  %#ok<AGROW>
     end
   end
   title(titleString, 'Fontsmoothing', 'off', 'FontSize', subSize, ...

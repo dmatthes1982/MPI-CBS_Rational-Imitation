@@ -17,7 +17,7 @@ filelist    = dir([folder, '/*.vhdr']);                                     % ge
 filelist    = struct2cell(filelist);
 filelist    = filelist(1,:);
 
-for i=1:1:childs                                                            % preproocessing of all files of the data folder
+parfor i=1:1:childs                                                            % preproocessing of all files of the data folder
   
   cellnumber  = find(contains(filelist, num2str(i,'%02.0f')), 1);
   
@@ -39,7 +39,7 @@ filelist    = dir([folder, '/*.vhdr']);                                     % ge
 filelist    = struct2cell(filelist);
 filelist    = filelist(1,:);
 
-for i=1:1:childs                                                            % preprocessing of all files of the data folder
+parfor i=1:1:childs                                                         % preprocessing of all files of the data folder
   
   cellnumber  = find(contains(filelist, num2str(i,'%02.0f')), 1);
   

@@ -1,5 +1,5 @@
 function [data_rmanova, bsData] = RI_rmAnova(cfg, data_hand, data_head, varargin)
-% RI_RMANOVA estimates a repeated measured ANOVA for two conditions
+% RI_RMANOVA estimates a repeated measures ANOVA for two conditions
 % (data_hand, data_head) and a free selectable number of electrodes or if
 % required a mixed repeated measured ANOVA with one additional 
 % between-subjects parameter, which can have two different values.
