@@ -186,6 +186,28 @@ else
 end
 
 % -------------------------------------------------------------------------
+% Resize y-axis subplots to common base
+% -------------------------------------------------------------------------
+y_min = 2000;
+y_max = 0;
+
+for j=1:1:numOfChan
+  subplot(subX, subY, j);
+  y_limits = get(gca,'ylim');
+  if y_limits(1) < y_min
+    y_min = y_limits(1);
+  end
+  if y_limits(2) > y_max
+    y_max = y_limits(2);
+  end
+end
+
+for j=1:1:numOfChan
+  subplot(subX, subY, j);
+  ylim([y_min y_max]);
+end
+
+% -------------------------------------------------------------------------
 % Save graphic as pdf-File
 % -------------------------------------------------------------------------
 h=gcf;

@@ -30,11 +30,11 @@ version   = ft_getopt(cfg, 'version', '1');                                 % is
 
 switch condition
   case 'HandsFree'
-    fileString = 'handsFree';
-    condString = 'Hands free';
+    condFileString = 'handsFree';
+    condFigString = 'Hands free';
   case 'HandsRestraint'
-    fileString = 'handsRestr';
-    condString = 'Hands restraint';
+    condFileString = 'handsRestr';
+    condFigString = 'Hands restraint';
   otherwise
     error('This condition currently does not exist.');
 end
@@ -42,13 +42,17 @@ end
 switch agegroup                                                             % if further agegroups are available, just add one new case and update the function description
   case '9Months'
     acronym = '9M';
-    grpString = 'Infants 9M';
+    grpFigString = 'Infants 9M';
+    grpFileString = 'Infants-9M';
     if strcmp(condition, 'HandsFree')
       part = 74;
+    else
+      error('No data for Infants 9M - Hands restraint available');
     end
   case '12Months'
     acronym = '12M';
-    grpString = 'Infants 12M';
+    grpFigString = 'Infants 12M';
+    grpFileString = 'Infants-12M';
     if strcmp(condition, 'HandsFree')
       part = 52;
     else
@@ -56,7 +60,8 @@ switch agegroup                                                             % if
     end
   case 'Adults'
     acronym = 'AD';
-    grpString = 'Adults';
+    grpFigString = 'Adults';
+    grpFileString = 'Adults';
     if strcmp(condition, 'HandsFree')
       part = 32;
     else
@@ -72,14 +77,14 @@ end
 if strcmp(import, 'yes')
   [data_hand, data_head, trialsAveraged] = RI_preprocBVA( ...
     sprintf('../../data/RationalImitation/%s_%s_SegHand_BVA/', ...
-           fileString, acronym), ...
+           condFileString, acronym), ...
     sprintf('../../data/RationalImitation/%s_%s_SegHead_BVA/', ...
-           fileString, acronym), ...
+           condFileString, acronym), ...
            part ); %#ok<ASGLU>
 else
   dest_folder = '../../processed/RationalImitation/';
   file_name = strcat(dest_folder, sprintf('RI_%s_%s_01_Preprocessed', ...
-              fileString, acronym));
+              condFileString, acronym));
   file_version = sprintf('_%03d.mat', version);
   file_path = strcat(file_name, file_version);
   file_num = length(dir(file_path));
@@ -96,7 +101,7 @@ end
 if strcmp(import, 'yes')
   dest_folder = '../../processed/RationalImitation/';
   file_name = strcat(dest_folder, sprintf('RI_%s_%s_01_Preprocessed', ...
-              fileString, acronym));
+              condFileString, acronym));
   file_path = strcat(file_name, '_001.mat');
   file_version = '_001.mat';
   if exist(file_path, 'file') == 2
@@ -108,7 +113,7 @@ if strcmp(import, 'yes')
   save(file_path, 'data_head', 'data_hand', 'trialsAveraged');
 else
   file_pattern = strcat(dest_folder, sprintf('RI_%s_%s_02_Shorten', ...
-                 fileString, acronym), '_*.mat' );
+                 condFileString, acronym), '_*.mat' );
   file_num = length(dir(file_pattern))+1;
   file_version = sprintf('_%03d.mat', file_num);
 end
@@ -123,7 +128,7 @@ data_hand_short = RI_redefinetrial(data_hand);
 % Export shortened trials into a mat-File
 % -------------------------------------------------------------------------
 file_name = strcat(dest_folder, sprintf('RI_%s_%s_02_Shorten', ...
-                 fileString, acronym));
+                 condFileString, acronym));
 file_path = strcat(file_name, file_version);
 save(file_path, 'data_head_short', 'data_hand_short', 'trialsAveraged');
 
@@ -137,7 +142,7 @@ data_hand_fft = RI_psdanalysis(data_hand_short);
 % Export psd data into a mat-File
 % -------------------------------------------------------------------------
 file_name = strcat(dest_folder, sprintf('RI_%s_%s_03_FFT', ...
-                 fileString, acronym));
+                 condFileString, acronym));
 file_path = strcat(file_name, file_version);
 save(file_path, 'data_head_fft', 'data_hand_fft', 'trialsAveraged');
 
@@ -151,7 +156,7 @@ save(file_path, 'data_head_fft', 'data_hand_fft', 'trialsAveraged');
 % Export psd data into a mat-File
 % -------------------------------------------------------------------------
 file_name = strcat(dest_folder, sprintf('RI_%s_%s_04_FFTmean', ...
-                 fileString, acronym));
+                 condFileString, acronym));
 file_path = strcat(file_name, file_version);
 save(file_path, 'data_head_fft_mean', 'data_hand_fft_mean');
 
@@ -160,23 +165,23 @@ save(file_path, 'data_head_fft_mean', 'data_hand_fft_mean');
 % -------------------------------------------------------------------------
 cfg = [];
 cfg.fig_title = sprintf('%s - %s - Hand - Mean power of every person', ... 
-                  grpString, condString);
-cfg.pdf_title = sprintf('%s-%s-Hand', grpString, fileString);
+                  grpFigString, condFigString);
+cfg.pdf_title = sprintf('%s-%s-Hand', grpFileString, condFileString);
 RI_psdPlot(cfg, data_hand_fft);
 
 cfg.fig_title = sprintf('%s - %s - Head - Mean power of every person', ... 
-                  grpString, condString);
-cfg.pdf_title = sprintf('%s-%s-Head', grpString, fileString);
+                  grpFigString, condFigString);
+cfg.pdf_title = sprintf('%s-%s-Head', grpFileString, condFileString);
 RI_psdPlot(cfg, data_head_fft);
 
 cfg.fig_title = sprintf('%s - %s - Hand - Power over all persons', ... 
-                  grpString, condString);
-cfg.pdf_title = sprintf('%s-%s-HandMean', grpString, fileString);
+                  grpFigString, condFigString);
+cfg.pdf_title = sprintf('%s-%s-HandMean', grpFileString, condFileString);
 RI_psdPlot(cfg, data_hand_fft_mean);
 
 cfg.fig_title = sprintf('%s - %s - Head - Power over all persons', ... 
-                  grpString, condString);
-cfg.pdf_title = sprintf('%s-%s-HeadMean', grpString, fileString);
+                  grpFigString, condFigString);
+cfg.pdf_title = sprintf('%s-%s-HeadMean', grpFileString, condFileString);
 RI_psdPlot(cfg, data_head_fft_mean);
 
 data_fft_mean = cell(1,2);
@@ -184,8 +189,9 @@ data_fft_mean{1} = data_hand_fft_mean;
 data_fft_mean{2} = data_head_fft_mean;
 
 cfg.fig_title = sprintf('%s - %s - Hand vs. Head - Power over all persons', ... 
-                  grpString, condString);
-cfg.pdf_title = sprintf('%s-%s-Compare-HandHeadMean', grpString, fileString);
+                  grpFigString, condFigString);
+cfg.pdf_title = sprintf('%s-%s-Compare-HandHeadMean', grpFileString, ...
+                        condFileString);
 RI_psdPlot(cfg, data_fft_mean);
 
 end
