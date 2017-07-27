@@ -16,8 +16,14 @@ function [ data_out ] = RI_psdanalysis( data_in )
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
-Fs = data_in{1}.fsample;
-L = length(data_in{1}.time{1});
+num = 1;
+
+while isempty(data_in{num})
+  num = num + 1; 
+end
+
+Fs = data_in{num}.fsample;
+L = length(data_in{num}.time{1});
 lengthInput = length(data_in);
 data_out{1, lengthInput} = [];
 

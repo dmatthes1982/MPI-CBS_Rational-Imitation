@@ -145,7 +145,11 @@ end
 chanNumbers{numOfChan} = [];
 
 if lengthInput > 1
-  label = data{1}.label;
+  num = 1;
+  while isempty(data{num})
+    num = num + 1; 
+  end
+  label = data{num}.label;
 else
   label = data.label;
 end
