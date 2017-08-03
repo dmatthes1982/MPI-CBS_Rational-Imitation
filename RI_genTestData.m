@@ -1,4 +1,4 @@
-load('../../processed/RationalImitation/RI_handsFree_01_Preprocessed_001.mat');
+load('/data/pt_01798/Rational_Imitation_processedFT/RI_handsFree_12M_Preprocessed_001.mat');
 
 freqSamp    = data_hand{1}.fsample;
 channels    = length(data_hand{1}.label);

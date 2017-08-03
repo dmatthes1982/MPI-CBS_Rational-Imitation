@@ -19,11 +19,11 @@ Peaks_Adults_HandsFree_Head = struct;                                       % ou
 Peaks_Adults_HandsRestr_Hand = struct;                                      % output structure for adults in study hands restraint of condition hand
 Peaks_Adults_HandsRestr_Head = struct;                                      % output structure for adults in study hands restraint of condition head
 
-srcFolder = '../../processed/RationalImitation/';                           % define source folder
-infHandsFreeFile = 'RI_handsFree_03_FFT_001.mat';                           % first data set: infants hands free
-infHandsRestrFile = 'RI_handsRestr_03_FFT_001.mat';                         % second data set: infants hands restraint
-adHandsFreeFile = 'RI_handsFree_Ad_03_FFT_001.mat';                         % third data set: adults hands free
-adHandsRestrFile = 'RI_handsRestr_Ad_03_FFT_001.mat';                       % fourth data set: adults hands restraint
+srcFolder = '/data/pt_01798/Rational_Imitation_processedFT/';               % define source folder
+infHandsFreeFile = 'RI_handsFree_12M_03_FFT_001.mat';                       % first data set: infants hands free
+infHandsRestrFile = 'RI_handsRestr_12M_03_FFT_001.mat';                     % second data set: infants hands restraint
+adHandsFreeFile = 'RI_handsFree_AD_03_FFT_001.mat';                         % third data set: adults hands free
+adHandsRestrFile = 'RI_handsRestr_AD_03_FFT_001.mat';                       % fourth data set: adults hands restraint
 
 for i=1:1:4                                                                 % repeat loop for the four defined data sets  
   switch i

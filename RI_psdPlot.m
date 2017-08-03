@@ -220,13 +220,14 @@ set(h, 'PaperType','a3');
 set(h, 'PaperUnit', 'centimeters');
 set(h, 'PaperSize', [42 29.7]);
 set(h, 'unit', 'normalized', 'Position', [0 0 0.9 0.9]);
-doc_title = sprintf('../../results/RationalImitation/%s', pdf_title);
+doc_title = sprintf('/data/pt_01798/Rational_Imitation_results/%s', ...
+                    pdf_title);
 file_path = strcat(doc_title, '_001.pdf');
 if exist(file_path, 'file') == 2
   file_pattern = strcat(doc_title, '_*.pdf');
   file_num = length(dir(file_pattern))+1;
-  file_path = sprintf('../../results/RationalImitation/%s_%03d.pdf', ... 
-              pdf_title, file_num);
+  file_path = sprintf('/data/pt_01798/Rational_Imitation_results/%s_%03d.pdf', ... 
+                      pdf_title, file_num);
 end
 print(gcf, '-dpdf', file_path);
 
