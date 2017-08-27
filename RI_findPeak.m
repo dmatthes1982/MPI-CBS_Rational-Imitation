@@ -38,14 +38,19 @@ if(length(freqRange) ~= 2)
   error('Specify a frequency range: [freqLow freqHigh]');
 end
 
-idxLow = find(data{1}.freq >= freqRange(1), 1, 'first');
-idxHigh = find(data{1}.freq <= freqRange(2), 1, 'last');
+num = 1;
+while isempty(data{num})
+  num = num + 1; 
+end
+
+idxLow = find(data{num}.freq >= freqRange(1), 1, 'first');
+idxHigh = find(data{num}.freq <= freqRange(2), 1, 'last');
 
 if idxLow == idxHigh
   error('Selected range results in one frequency, please select a larger range');
 else
   freqCols = idxLow:idxHigh;
-  actFreqRange = data{1}.freq(idxLow:idxHigh);                               % Calculate actual frequency range
+  actFreqRange = data{num}.freq(idxLow:idxHigh);                            % Calculate actual frequency range
 end
 
 % -------------------------------------------------------------------------
@@ -58,11 +63,11 @@ peakFreq{dataLength} = [];
 % Interpret component specification
 % -------------------------------------------------------------------------
 if isnumeric(component)
-  if ~(component >= 1 && component <= length(data{1}.label))
+  if ~(component >= 1 && component <= length(data{num}.label))
     error('Chosen component is not available');
   end
 else
-  component = find(strcmp(data{1}.label, component));
+  component = find(strcmp(data{num}.label, component));
   if isempty(component)
     error('Chosen component is not available');
   end
