@@ -44,11 +44,16 @@ switch length(varargin)
     error('to many or to few input values, see specifications: help RI_rmAnova');
 end
 
+num = 1;
+while isempty(data_head{num})                                               % get number of first non-empty member of datasets
+  num = num + 1; 
+end
+
 if bwSubParam == 1                                                          % Check if different datasets share the same labels and the same frequency resolution/range
-  if ~all(strcmp(data_head{1}.label, data_head2{1}.label))
+  if ~all(strcmp(data_head{num}.label, data_head2{num}.label))
     error('The datasets consist of different labels');
   end
-  if ~all(eq(data_head{1}.freq, data_head2{1}.freq))
+  if ~all(eq(data_head{num}.freq, data_head2{num}.freq))
     error('The datasets consist of different frequencies');
   end
 end
@@ -68,20 +73,20 @@ if(length(freq) > 2)
 end
 
 if(length(freq) == 1)
-  [~, freqCols] = min(abs(data_hand{1}.freq-freq));                         % Calculate data column of selected frequency
-  data_rmanova.cfg.freq = data_hand{1}.freq(freqCols);                      % Calculate actual frequency
+  [~, freqCols] = min(abs(data_hand{num}.freq-freq));                       % Calculate data column of selected frequency
+  data_rmanova.cfg.freq = data_hand{num}.freq(freqCols);                    % Calculate actual frequency
 end
 
 if(length(freq) == 2)                                                       % Calculate data column range of selected frequency range
-  idxLow = find(data_hand{1}.freq >= freq(1), 1, 'first');
-  idxHigh = find(data_hand{1}.freq <= freq(2), 1, 'last');
+  idxLow = find(data_hand{num}.freq >= freq(1), 1, 'first');
+  idxHigh = find(data_hand{num}.freq <= freq(2), 1, 'last');
   if idxLow == idxHigh
     freqCols = idxLow;
-    data_rmanova.cfg.freq  = data_hand{1}.freq(freqCols);                   % Calculate actual frequency
+    data_rmanova.cfg.freq  = data_hand{num}.freq(freqCols);                 % Calculate actual frequency
   else
     freqCols = idxLow:idxHigh;
-    actFreqLow = data_hand{1}.freq(idxLow);
-    actFreqHigh = data_hand{1}.freq(idxHigh);
+    actFreqLow = data_hand{num}.freq(idxLow);
+    actFreqHigh = data_hand{num}.freq(idxHigh);
     data_rmanova.cfg.freq = [actFreqLow actFreqHigh];                       % Calculate actual frequency range
   end
 end
@@ -96,13 +101,13 @@ else
 end
 
 if any(strcmp(cfg.channel, 'all'))
-  channel = data_hand{1}.label;
+  channel = data_hand{num}.label;
   data_rmanova.cfg.channel = channel';
   chnNum = num2cell(1:1:length(channel));
 else
   channel = unique(channel);                                                % Remove multiple entries
   data_rmanova.cfg.channel = channel;
-  [channel, chnNum] = RI_channelselection(channel, data_hand{1}.label);
+  [channel, chnNum] = RI_channelselection(channel, data_hand{num}.label);
 end
 
 numOfElec = length(channel);                                                % Get number of channels

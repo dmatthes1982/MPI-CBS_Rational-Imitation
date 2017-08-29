@@ -49,12 +49,17 @@ else
   channel = 'all';
 end
 
+num = 1;
+while isempty(data_head{num})                                               % get number of first non-empty member of datasets
+  num = num + 1; 
+end
+
 if any(strcmp(cfg.channel, 'all'))
-  channel = data_hand{1}.label;
+  channel = data_hand{num}.label;
   chnNum = num2cell(1:1:length(channel));
 else
   channel = unique(channel);                                                % Remove multiple entries
-  [channel, chnNum] = RI_channelselection(channel, data_hand{1}.label);
+  [channel, chnNum] = RI_channelselection(channel, data_hand{num}.label);
 end
 
 numOfElec = length(channel);                                                % Get number of channels
@@ -66,11 +71,11 @@ if isfield(cfg, 'frequency')
   freq = cfg.frequency;
   if ischar(freq)
     if strcmp(freq, 'all')
-      freq = [data_hand{1}.freq(1) data_hand{1}.freq(end)];
+      freq = [data_hand{num}.freq(1) data_hand{num}.freq(end)];
     end
   end
 else
-  freq = [data_hand{1}.freq(1) data_hand{1}.freq(end)];
+  freq = [data_hand{num}.freq(1) data_hand{num}.freq(end)];
 end
 
 if(length(freq) > 2)
@@ -78,12 +83,12 @@ if(length(freq) > 2)
 end
 
 if(length(freq) == 1)
-  [~, freqCols] = min(abs(data_hand{1}.freq-freq));                         % Calculate data column of selected frequency
+  [~, freqCols] = min(abs(data_hand{num}.freq-freq));                       % Calculate data column of selected frequency
 end
 
 if(length(freq) == 2)                                                       % Calculate data column range of selected frequency range
-  idxLow = find(data_hand{1}.freq >= freq(1), 1, 'first');
-  idxHigh = find(data_hand{1}.freq <= freq(2), 1, 'last');
+  idxLow = find(data_hand{num}.freq >= freq(1), 1, 'first');
+  idxHigh = find(data_hand{num}.freq <= freq(2), 1, 'last');
   if idxLow == idxHigh
     freqCols = idxLow;
   else
