@@ -7,7 +7,7 @@ function RI_main( cfg )
 %   RI_main( cfg )
 %
 % The configuration can have the following parameters:
-%   cfg.condition = 'HandsFree', 'HandsRestraint' (default: 'HandsFree')
+%   cfg.condition = 'HandsFree', 'HandsRestrained' (default: 'HandsFree')
 %   cfg.agegroup  = '9Months', '12Months', 'Adults' (default: '12Months')
 %   cfg.import    = 'yes', 'no' (Import from original files) (default: 'yes')
 %   cfg.version   = number (only relevant if cfg.import == 'no') (default: 1)
@@ -32,9 +32,9 @@ switch condition
   case 'HandsFree'
     condFileString = 'handsFree';
     condFigString = 'Hands free';
-  case 'HandsRestraint'
+  case 'HandsRestrained'
     condFileString = 'handsRestr';
-    condFigString = 'Hands restraint';
+    condFigString = 'Hands restrained';
   otherwise
     error('This condition currently does not exist.');
 end
@@ -47,7 +47,7 @@ switch agegroup                                                             % if
     if strcmp(condition, 'HandsFree')
       part = 74;
     else
-      error('No data for Infants 9M - Hands restraint available');
+      error('No data for Infants 9M - Hands restrained available');
     end
   case '12Months'
     acronym = '12M';

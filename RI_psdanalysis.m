@@ -32,8 +32,7 @@ warning('off','all');
 cfg                 = [];
 cfg.method          = 'mtmfft';
 cfg.output          = 'pow';
-cfg.channel         = {'F3', 'F4', 'Fz', 'C3', 'C4', 'Cz', ...              % calculate spectrum of F3, F4, Fz, C3, C4, Cz, P3, P4, Pz
-                       'P3', 'P4', 'Pz'};                            
+cfg.channel         = 'all';                            
 cfg.trials          = 'all';                                                % calculate spectrum for every trial  
 cfg.keeptrials      = 'no';                                                 % average over trials
 cfg.pad             = 'maxperlen';                                          % no padding

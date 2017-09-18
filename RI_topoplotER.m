@@ -1,18 +1,14 @@
 pdf_title = 'output';
 
 cfg=[];
-cfg.layout = 'elec1020.lay';
-layout = ft_prepare_layout(cfg, data_head_short{1});
-
-cfg=[];
 cfg.parameter = 'powspctrm';
-cfg.channel = {'F3', 'Fz', 'F4', 'C3', 'Cz', 'C4', 'P3', 'Pz', 'P4'};
+cfg.channel = {'all', '-VEOG1', '-VEOG2', '-HEOG1', '-HEOG2'};
 cfg.baseline = 'no';
-cfg.xlim = [3 6];                                                           % passband 3-6 Hz
-%cfg.zlim = [25 43];
+cfg.xlim = [6 8];                                                           % passband 3-6 Hz
+%cfg.zlim = [0 1000];
 cfg.colormap = 'jet';
 cfg.marker = 'labels';
-cfg.layout = layout;
+cfg.layout = 'hdbg_customized_acticap32.mat';
 cfg.interplimits = 'head';
 cfg.interpolation = 'v4';
 
