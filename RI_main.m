@@ -149,8 +149,14 @@ save(file_path, 'data_head_fft', 'data_hand_fft', 'trialsAveraged');
 % -------------------------------------------------------------------------
 % Calculate mean PSD over all people (Step 4)
 % -------------------------------------------------------------------------
-[data_hand_fft_mean, data_head_fft_mean] = RI_averagePeople(...
-                                            data_hand_fft, data_head_fft);
+[data_hand_fft_mean, data_head_fft_mean, data_all_fft_mean] = ...
+                RI_averagePeople(data_hand_fft, data_head_fft);             %#ok<ASGLU>
+
+cfg = [];
+cfg.parameter = 'powspctrm';
+cfg.operation = 'subtract';
+                                          
+data_diff_fft_mean = ft_math(cfg, data_hand_fft_mean, data_head_fft_mean);  %#ok<NASGU>
 
 % -------------------------------------------------------------------------
 % Export psd data into a mat-File
@@ -158,7 +164,8 @@ save(file_path, 'data_head_fft', 'data_hand_fft', 'trialsAveraged');
 file_name = strcat(dest_folder, sprintf('RI_%s_%s_04_FFTmean', ...
                  condFileString, acronym));
 file_path = strcat(file_name, file_version);
-save(file_path, 'data_head_fft_mean', 'data_hand_fft_mean');
+save(file_path, 'data_head_fft_mean', 'data_hand_fft_mean', ...
+                'data_diff_fft_mean', 'data_all_fft_mean');
 
 % -------------------------------------------------------------------------
 % Create and export plots

@@ -1,11 +1,10 @@
-pdf_title = 'output';
+pdf_title = 'outputNew';
 
 cfg=[];
 cfg.parameter = 'powspctrm';
 cfg.channel = {'all', '-VEOG1', '-VEOG2', '-HEOG1', '-HEOG2'};
 cfg.baseline = 'no';
-cfg.xlim = [6 8];                                                           % passband 3-6 Hz
-%cfg.zlim = [0 1000];
+cfg.xlim = [6 8];                                                           % passband 6-8 Hz
 cfg.colormap = 'jet';
 cfg.marker = 'labels';
 cfg.layout = 'hdbg_customized_acticap32.mat';
@@ -13,14 +12,24 @@ cfg.interplimits = 'head';
 cfg.interpolation = 'v4';
 
 figure(2);
-subplot(1,2,1);
+subplot(2,2,1);
 title('Hands Free - Condition: Hand');
 ft_topoplotER(cfg, data_hand_fft_mean);
 colorbar;
-subplot(1,2,2);
+subplot(2,2,2);
 title('Hands Free - Condition: Head');
 ft_topoplotER(cfg, data_head_fft_mean);
 colorbar;
+subplot(2,2,3);
+title('Hands Free - All Conditions');
+ft_topoplotER(cfg, data_all_fft_mean);
+colorbar;
+subplot(2,2,4);
+title('Hands Free - Diff Hand/Head');
+ft_topoplotER(cfg, data_diff_fft_mean);
+colorbar;
+
+
 
 % -------------------------------------------------------------------------
 % Save graphic as pdf-File
