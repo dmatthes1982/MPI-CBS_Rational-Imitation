@@ -18,6 +18,7 @@ function [data_rmanova, bsData] = RI_rmAnova(cfg, data_hand, data_head, varargin
 % The configuration options are
 %    cfg.freq      = number or range (i.e. 6 or [6 10]), unit = Hz
 %    cfg.channel   = 'all' or a specific selection (i.e. {'C3', 'P*', '*4'})
+%                     (default: {'C3','C4','Cz','F3','F4','Fz','P3','P4','Pz'})
 %
 % See also RI_CHANNELSELECTION, FITRM, ranova, epsilon, mauchly
 
@@ -57,7 +58,6 @@ if bwSubParam == 1                                                          % Ch
     error('The datasets consist of different frequencies');
   end
 end
-  
 
 % -------------------------------------------------------------------------
 % Determine frequencies of interest
@@ -94,13 +94,10 @@ end
 % -------------------------------------------------------------------------
 % Determine channels/electrodes of interest
 % -------------------------------------------------------------------------
-if isfield(cfg, 'channel')
-  channel = cfg.channel;
-else
-  error('Channels of interest are not defined in cfg');
-end
+channel = ft_getopt(cfg, 'channel', {'C3','C4','Cz','F3','F4','Fz', ...
+                                     'P3','P4','Pz'});
 
-if any(strcmp(cfg.channel, 'all'))
+if any(strcmp(channel, 'all'))
   channel = data_hand{num}.label;
   data_rmanova.cfg.channel = channel';
   chnNum = num2cell(1:1:length(channel));

@@ -22,7 +22,6 @@ function RI_main( cfg )
 % -------------------------------------------------------------------------
 % Get and check config options
 % -------------------------------------------------------------------------
-
 condition = ft_getopt(cfg, 'condition', 'HandsFree');
 agegroup  = ft_getopt(cfg, 'agegroup', '12Months');
 import    = ft_getopt(cfg, 'import', 'yes');                                % if import == 0, already imported data will be loaded
