@@ -1,232 +1,158 @@
-% -------------------------------------------------------------------------
-% Select frequency ranges
-% -------------------------------------------------------------------------
-MuInfants09 = [6 9];                                                        % define here general mu-range for 9 months old
-MuInfants12 = [6 9];                                                        % define here general mu-range for 12 months old
-MuAdult = [8 13];                                                           % define here general mu-range for adults 
+function [ dataPeaks ] = RI_mainFindPeak( cfg )
+% RI_MAINFINDPEAK determines the specific mu and theta range of in a
+% certain agegroup
+%
+% Use as
+%   [ dataPeaks ]RI_mainFindPeak( cfg )
+%
+% The configuration can have the following parameters:
+%   cfg.agegroup  = '9Months', '12Months', '12MonthsV2', 'Adults' (default: '12Months')
+%
+% This function requires the fieldtrip toolbox
+%
+% See also RI_FINDPEAK
 
-ThetaInfants09 = [3.333 5.333];                                             % define here general theta-range for 9 months old
-ThetaInfants12 = [3.333 5.333];                                             % define here general theta-range for 12 months old
-ThetaAdult = [3 7];                                                         % define here general theta-range for adults
+% Copyright (C) 2017, Daniel Matthes, MPI CBS
+
+% -------------------------------------------------------------------------
+% Get and check config options
+% -------------------------------------------------------------------------
+agegroup  = ft_getopt(cfg, 'agegroup', '12Months');
+
+switch agegroup
+  case '9Months'
+    freqRange_mu =  [6 9];                                                  % define here principal mu-range
+    freqRange_theta = [3.333 5.333];                                        % define here principal theta-range
+    HandsFreeFile = 'RI_handsFree_9M_03_FFT_001.mat'; 
+  case '12Months'
+    freqRange_mu =  [6 9];                                                  % define here principal mu-range
+    freqRange_theta = [3.333 5.333];                                        % define here principal theta-range
+    HandsFreeFile = 'RI_handsFree_12M_03_FFT_001.mat';
+    HandsRestrFile = 'RI_handsRestr_12M_03_FFT_001.mat';
+  case '12MonthsV2'
+    freqRange_mu =  [6 9];                                                  % define here principal mu-range
+    freqRange_theta = [3.333 5.333];                                        % define here principal theta-range
+    HandsFreeFile = 'RI_handsFree_12Mv2_03_FFT_001.mat';
+    HandsRestrFile = 'RI_handsRestr_12Mv2_03_FFT_001.mat'; 
+  case 'Adults'
+    freqRange_mu = [8 13];                                                  % define here principal mu-range
+    freqRange_theta = [3 7];                                                % define here principal theta-range
+    HandsFreeFile = 'RI_handsFree_AD_03_FFT_001.mat';
+    HandsRestrFile = 'RI_handsRestr_AD_03_FFT_001.mat';
+end
 
 % -------------------------------------------------------------------------
 % General initialization
 % -------------------------------------------------------------------------
-Peaks_Infants09_HandsFree_Hand = struct;                                    % output structure for 9 months old in study hands free of condition hand
-Peaks_Infants09_HandsFree_Head = struct;                                    % output structure for 9 months old in study hands free of condition head
-Peaks_Infants12_HandsFree_Hand = struct;                                    % output structure for 12 months old in study hands free of condition hand
-Peaks_Infants12_HandsFree_Head = struct;                                    % output structure for 12 months old in study hands free of condition head
-Peaks_Infants12_HandsRestr_Hand = struct;                                   % output structure for 12 months old in study hands restraint of condition hand
-Peaks_Infants12_HandsRestr_Head = struct;                                   % output structure for 12 months old in study hands restraint of condition head
-Peaks_Adults_HandsFree_Hand = struct;                                       % output structure for adults in study hands free of condition hand
-Peaks_Adults_HandsFree_Head = struct;                                       % output structure for adults in study hands free of condition head
-Peaks_Adults_HandsRestr_Hand = struct;                                      % output structure for adults in study hands restraint of condition hand
-Peaks_Adults_HandsRestr_Head = struct;                                      % output structure for adults in study hands restraint of condition head
-
 srcFolder = '/data/pt_01798/Rational_Imitation_processedFT/';               % define source folder
-inf09HandsFreeFile = 'RI_handsFree_9M_03_FFT_001.mat';                      % first data set: 9 months old hands free
-inf12HandsFreeFile = 'RI_handsFree_12M_03_FFT_001.mat';                     % second data set: 12 months old hands free
-inf12HandsRestrFile = 'RI_handsRestr_12M_03_FFT_001.mat';                   % third data set: 12 months old hands restraint
-adHandsFreeFile = 'RI_handsFree_AD_03_FFT_001.mat';                         % fourth data set: adults hands free
-adHandsRestrFile = 'RI_handsRestr_AD_03_FFT_001.mat';                       % fifth data set: adults hands restraint
 
-for i=1:1:5                                                                 % repeat loop for the four defined data sets  
-  switch i
-    case 1                                                                  % set parameter the first data
-      load(strcat(srcFolder, inf09HandsFreeFile));
-      freqRange_mu = MuInfants09;
-      freqRange_theta = ThetaInfants09;
-    case 2                                                                  % set parameter the second data
-      load(strcat(srcFolder, inf12HandsFreeFile));
-      freqRange_mu = MuInfants12;
-      freqRange_theta = ThetaInfants12;
-    case 3                                                                  % set parameter the third data
-      load(strcat(srcFolder, inf12HandsRestrFile));
-      freqRange_mu = MuInfants12;
-      freqRange_theta = ThetaInfants12;
-    case 4                                                                  % set parameter the fourth data
-      load(strcat(srcFolder, adHandsFreeFile));
-      freqRange_mu = MuAdult;
-      freqRange_theta = ThetaAdult;
-    case 5                                                                  % set parameter the fifth data
-      load(strcat(srcFolder, adHandsRestrFile));
-      freqRange_mu = MuAdult;
-      freqRange_theta = ThetaAdult;
-  end
- 
-  num = 1;
-  while isempty(data_hand_fft{num})
-    num = num + 1; 
-  end
+% -------------------------------------------------------------------------
+% Load data
+% -------------------------------------------------------------------------
+load(strcat(srcFolder, HandsFreeFile), 'data_hand_fft', 'data_head_fft');
+
+[Peaks_HandsFree_Hand, Peaks_HandsFree_Head] = getPeaks( ...
+      data_hand_fft, data_head_fft, freqRange_mu, freqRange_theta);
+    
+clear data_hand_fft data_head_fft
+
+dataPeaks.Peaks_HandsFree_Hand = Peaks_HandsFree_Hand;
+dataPeaks.Peaks_HandsFree_Head = Peaks_HandsFree_Head;
+
+if ~strcmp(agegroup, '9Months')
+  load(strcat(srcFolder, HandsRestrFile), 'data_hand_fft', 'data_head_fft');
   
-  goodParticipants = length(data_hand_fft) - sum(cellfun(@isempty, ...      % calculate length of dataset / number of good participants
-               data_hand_fft)); 
-  numChn = length(data_hand_fft{num}.label);                                  % get number of channels/electrodes
-  numPeaks_m_hand = zeros(1, numChn);                                       % initialize/reset temporary variables
-  minVal_m_hand = zeros(1, numChn);
-  maxVal_m_hand = zeros(1, numChn);
-  numPeaks_t_hand = zeros(1, numChn);
-  minVal_t_hand = zeros(1, numChn);
-  maxVal_t_hand = zeros(1, numChn);
-  numPeaks_m_head = zeros(1, numChn);
-  minVal_m_head = zeros(1, numChn);
-  maxVal_m_head = zeros(1, numChn);
-  numPeaks_t_head = zeros(1, numChn);
-  minVal_t_head = zeros(1, numChn);
-  maxVal_t_head = zeros(1, numChn);
-  
-  cfg = [];
-  
-  for j=1:1:numChn                                                          % repeat this subloop for all channels/electrodes 
-    cfg.freqRange = freqRange_mu;
-    cfg.component = data_hand_fft{num}.label{j};
-    peakFreq = cell2mat(RI_findPeak(cfg, data_hand_fft));                   % determine peaks in the mu-range of all participants (condition hand)
-    numPeaks_m_hand(j) = length(peakFreq);                                  % get the number of the determined peaks
-    if (numPeaks_m_hand(j))                                                 % calculate minimum and maximum peaks are found
-      minVal_m_hand(j) = min(peakFreq);
-      maxVal_m_hand(j) = max(peakFreq);
-    else
-      minVal_m_hand(j) = NaN;
-      maxVal_m_hand(j) = NaN; 
-    end
+  [Peaks_HandsRestr_Hand, Peaks_HandsRestr_Head] = getPeaks( ...
+      data_hand_fft, data_head_fft, freqRange_mu, freqRange_theta);
     
-    cfg.freqRange = freqRange_mu;
-    cfg.component = data_head_fft{num}.label{j};   
-    peakFreq = cell2mat(RI_findPeak(cfg, data_head_fft));                   % determine peaks in the mu-range of all participants (condition head)
-    numPeaks_m_head(j) = length(peakFreq);                                  % get the number of the determined peaks            
-    if(numPeaks_m_head(j))                                                  % calculate minimum and maximum peaks are found
-      minVal_m_head(j) = min(peakFreq);
-      maxVal_m_head(j) = max(peakFreq);
-    else
-      minVal_m_head(j) = NaN;
-      maxVal_m_head(j) = NaN;
-    end
-    
-    cfg.freqRange = freqRange_theta;
-    cfg.component = data_hand_fft{num}.label{j};
-    peakFreq = cell2mat(RI_findPeak(cfg, data_hand_fft));                   % determine peaks in the theta-range of all participants (condition hand)
-    numPeaks_t_hand(j) = length(peakFreq);                                  % get the number of the determined peaks
-    if(numPeaks_t_hand(j))                                                  % calculate minimum and maximum peaks are found 
-      minVal_t_hand(j) = min(peakFreq);
-      maxVal_t_hand(j) = max(peakFreq);
-    else
-      minVal_t_hand(j) = NaN;
-      maxVal_t_hand(j) = NaN;
-    end
-    
-    cfg.freqRange = freqRange_theta;
-    cfg.component = data_head_fft{num}.label{j};
-    peakFreq = cell2mat(RI_findPeak(cfg, data_head_fft));                   % determine peaks in the theta-range of all participants (condition head)
-    numPeaks_t_head(j) = length(peakFreq);                                  % get the number of the determined peaks
-    if (numPeaks_t_head(j))                                                 % calculate minimum and maximum peaks are found
-      minVal_t_head(j) = min(peakFreq);
-      maxVal_t_head(j) = max(peakFreq);
-    else
-      minVal_t_head(j) = NaN;
-      maxVal_t_head(j) = NaN;
-    end
-  end
-  
-  switch i
-    case 1                                                                  % save results of the first dataset
-      Peaks_Infants09_HandsFree_Hand.label = data_hand_fft{num}.label';
-      Peaks_Infants09_HandsFree_Hand.goodParticipants = goodParticipants;       
-      Peaks_Infants09_HandsFree_Hand.peaksMu = numPeaks_m_hand;
-      Peaks_Infants09_HandsFree_Hand.minMu = minVal_m_hand;
-      Peaks_Infants09_HandsFree_Hand.maxMu = maxVal_m_hand;
-      Peaks_Infants09_HandsFree_Hand.peaksTheta = numPeaks_t_hand;
-      Peaks_Infants09_HandsFree_Hand.minTheta = minVal_t_hand;
-      Peaks_Infants09_HandsFree_Hand.maxTheta = maxVal_t_hand;
-     
-      Peaks_Infants09_HandsFree_Head.label = data_head_fft{num}.label';
-      Peaks_Infants09_HandsFree_Head.goodParticipants = goodParticipants;
-      Peaks_Infants09_HandsFree_Head.peaksMu = numPeaks_m_head;
-      Peaks_Infants09_HandsFree_Head.minMu = minVal_m_head;
-      Peaks_Infants09_HandsFree_Head.maxMu = maxVal_m_head;
-      Peaks_Infants09_HandsFree_Head.peaksTheta = numPeaks_t_head;
-      Peaks_Infants09_HandsFree_Head.minTheta = minVal_t_head;
-      Peaks_Infants09_HandsFree_Head.maxTheta = maxVal_t_head;
-    
-    case 2                                                                  % save results of the first dataset
-      Peaks_Infants12_HandsFree_Hand.label = data_hand_fft{num}.label';
-      Peaks_Infants12_HandsFree_Hand.goodParticipants = goodParticipants;       
-      Peaks_Infants12_HandsFree_Hand.peaksMu = numPeaks_m_hand;
-      Peaks_Infants12_HandsFree_Hand.minMu = minVal_m_hand;
-      Peaks_Infants12_HandsFree_Hand.maxMu = maxVal_m_hand;
-      Peaks_Infants12_HandsFree_Hand.peaksTheta = numPeaks_t_hand;
-      Peaks_Infants12_HandsFree_Hand.minTheta = minVal_t_hand;
-      Peaks_Infants12_HandsFree_Hand.maxTheta = maxVal_t_hand;
-     
-      Peaks_Infants12_HandsFree_Head.label = data_head_fft{num}.label';
-      Peaks_Infants12_HandsFree_Head.goodParticipants = goodParticipants;
-      Peaks_Infants12_HandsFree_Head.peaksMu = numPeaks_m_head;
-      Peaks_Infants12_HandsFree_Head.minMu = minVal_m_head;
-      Peaks_Infants12_HandsFree_Head.maxMu = maxVal_m_head;
-      Peaks_Infants12_HandsFree_Head.peaksTheta = numPeaks_t_head;
-      Peaks_Infants12_HandsFree_Head.minTheta = minVal_t_head;
-      Peaks_Infants12_HandsFree_Head.maxTheta = maxVal_t_head;
-    case 3                                                                  % save results of the second dataset
-      Peaks_Infants12_HandsRestr_Hand.label = data_hand_fft{num}.label';
-      Peaks_Infants12_HandsRestr_Hand.goodParticipants = goodParticipants;
-      Peaks_Infants12_HandsRestr_Hand.peaksMu = numPeaks_m_hand;
-      Peaks_Infants12_HandsRestr_Hand.minMu = minVal_m_hand;
-      Peaks_Infants12_HandsRestr_Hand.maxMu = maxVal_m_hand;
-      Peaks_Infants12_HandsRestr_Hand.peaksTheta = numPeaks_t_hand;
-      Peaks_Infants12_HandsRestr_Hand.minTheta = minVal_t_hand;
-      Peaks_Infants12_HandsRestr_Hand.maxTheta = maxVal_t_hand;
-      
-      Peaks_Infants12_HandsRestr_Head.label = data_head_fft{num}.label';
-      Peaks_Infants12_HandsRestr_Head.goodParticipants = goodParticipants;
-      Peaks_Infants12_HandsRestr_Head.peaksMu = numPeaks_m_head;
-      Peaks_Infants12_HandsRestr_Head.minMu = minVal_m_head;
-      Peaks_Infants12_HandsRestr_Head.maxMu = maxVal_m_head;
-      Peaks_Infants12_HandsRestr_Head.peaksTheta = numPeaks_t_head;
-      Peaks_Infants12_HandsRestr_Head.minTheta = minVal_t_head;
-      Peaks_Infants12_HandsRestr_Head.maxTheta = maxVal_t_head;
-    case 4                                                                  % save results of the third dataset
-      Peaks_Adults_HandsFree_Hand.label = data_hand_fft{num}.label';
-      Peaks_Adults_HandsFree_Hand.goodParticipants = goodParticipants;
-      Peaks_Adults_HandsFree_Hand.peaksMu = numPeaks_m_hand;
-      Peaks_Adults_HandsFree_Hand.minMu = minVal_m_hand;
-      Peaks_Adults_HandsFree_Hand.maxMu = maxVal_m_hand;
-      Peaks_Adults_HandsFree_Hand.peaksTheta = numPeaks_t_hand;
-      Peaks_Adults_HandsFree_Hand.minTheta = minVal_t_hand;
-      Peaks_Adults_HandsFree_Hand.maxTheta = maxVal_t_hand;
-      
-      Peaks_Adults_HandsFree_Head.label = data_head_fft{num}.label';
-      Peaks_Adults_HandsFree_Head.goodParticipants = goodParticipants;
-      Peaks_Adults_HandsFree_Head.peaksMu = numPeaks_m_head;
-      Peaks_Adults_HandsFree_Head.minMu = minVal_m_head;
-      Peaks_Adults_HandsFree_Head.maxMu = maxVal_m_head;
-      Peaks_Adults_HandsFree_Head.peaksTheta = numPeaks_t_head;
-      Peaks_Adults_HandsFree_Head.minTheta = minVal_t_head;
-      Peaks_Adults_HandsFree_Head.maxTheta = maxVal_t_head;
-    case 5                                                                  % save results of the fourth dataset
-      Peaks_Adults_HandsRestr_Hand.label = data_hand_fft{num}.label';
-      Peaks_Adults_HandsRestr_Hand.goodParticipants = goodParticipants;
-      Peaks_Adults_HandsRestr_Hand.peaksMu = numPeaks_m_hand;
-      Peaks_Adults_HandsRestr_Hand.minMu = minVal_m_hand;
-      Peaks_Adults_HandsRestr_Hand.maxMu = maxVal_m_hand;
-      Peaks_Adults_HandsRestr_Hand.peaksTheta = numPeaks_t_hand;
-      Peaks_Adults_HandsRestr_Hand.minTheta = minVal_t_hand;
-      Peaks_Adults_HandsRestr_Hand.maxTheta = maxVal_t_hand;
-      
-      Peaks_Adults_HandsRestr_Head.label = data_head_fft{num}.label';
-      Peaks_Adults_HandsRestr_Head.goodParticipants = goodParticipants;
-      Peaks_Adults_HandsRestr_Head.peaksMu = numPeaks_m_head;
-      Peaks_Adults_HandsRestr_Head.minMu = minVal_m_head;
-      Peaks_Adults_HandsRestr_Head.maxMu = maxVal_m_head;
-      Peaks_Adults_HandsRestr_Head.peaksTheta = numPeaks_t_head;
-      Peaks_Adults_HandsRestr_Head.minTheta = minVal_t_head;
-      Peaks_Adults_HandsRestr_Head.maxTheta = maxVal_t_head;
-  end
-    
-  clear data_hand_fft data_head_fft trialsAveraged num;                     % remove loaded dataset from workspace
+  dataPeaks.Peaks_HandsRestr_Hand = Peaks_HandsRestr_Hand;
+  dataPeaks.Peaks_HandsRestr_Head = Peaks_HandsRestr_Head;
+end
+   
 end
 
-clear i j freqRange_mu freqRange_theta peakFreq maxVal_m_hand ...           % delete temporary variables
-      goodParticipants numChn numPeaks_m_hand minVal_m_hand ...
-      numPeaks_t_hand minVal_t_hand maxVal_t_hand numPeaks_m_head ...
-      minVal_m_head maxVal_m_head numPeaks_t_head minVal_t_head ...
-      maxVal_t_head srcFolder inf12HandsFreeFile inf12HandsRestrFile ...
-      adHandsFreeFile adHandsRestrFile cfg inf09HandsFreeFile 
+function [PeaksCondHand, PeaksCondHead] = getPeaks(data_hand, data_head, mu, theta)
+
+PeaksCondHand = struct;
+PeaksCondHead = struct;
+
+num = 1;
+while isempty(data_hand{num})
+  num = num + 1; 
+end
+  
+numChn = length(data_hand{num}.label);                                      % get number of channels/electrodes
+             
+PeaksCondHand.label = data_hand{num}.label';
+PeaksCondHand.goodParticipants = length(data_hand) ...                      % calculate length of dataset / number of good participants
+               - sum(cellfun(@isempty, data_hand));       
+PeaksCondHand.peaksMu = zeros(1, numChn);
+PeaksCondHand.minMu = zeros(1, numChn);
+PeaksCondHand.maxMu = zeros(1, numChn);
+PeaksCondHand.peaksTheta = zeros(1, numChn);
+PeaksCondHand.minTheta = zeros(1, numChn);
+PeaksCondHand.maxTheta = zeros(1, numChn);
+     
+PeaksCondHead.label = data_head{num}.label';                            
+PeaksCondHead.goodParticipants = length(data_head) ...                      % calculate length of dataset / number of good participants
+               - sum(cellfun(@isempty, data_head));
+PeaksCondHead.peaksMu = zeros(1, numChn);
+PeaksCondHead.minMu = zeros(1, numChn);
+PeaksCondHead.maxMu = zeros(1, numChn);
+PeaksCondHead.peaksTheta = zeros(1, numChn);
+PeaksCondHead.minTheta = zeros(1, numChn);
+PeaksCondHead.maxTheta = zeros(1, numChn);
+
+cfgP = [];
+
+for j=1:1:numChn                                                            % repeat this subloop for all channels/electrodes 
+  cfgP.freqRange = mu;
+  cfgP.component = data_hand{num}.label{j};
+  peakFreq = cell2mat(RI_findPeak(cfgP, data_hand));                        % determine peaks in the mu-range of all participants (condition hand)
+  PeaksCondHand.peaksMu(j) = length(peakFreq);                              % get the number of the determined peaks
+  if (PeaksCondHand.peaksMu(j))                                             % calculate minimum and maximum peaks are found
+    PeaksCondHand.minMu(j) = min(peakFreq);
+    PeaksCondHand.maxMu(j) = max(peakFreq);
+  else
+    PeaksCondHand.minMu(j) = NaN;
+    PeaksCondHand.maxMu(j) = NaN; 
+  end
+    
+  cfgP.freqRange = mu;
+  cfgP.component = data_head{num}.label{j};                              
+  peakFreq = cell2mat(RI_findPeak(cfgP, data_head));                        % determine peaks in the mu-range of all participants (condition head)
+  PeaksCondHead.peaksMu(j) = length(peakFreq);                              % get the number of the determined peaks            
+  if(PeaksCondHead.peaksMu(j))                                              % calculate minimum and maximum peaks are found
+    PeaksCondHead.minMu(j) = min(peakFreq);
+    PeaksCondHead.maxMu(j) = max(peakFreq);
+  else
+    PeaksCondHead.minMu(j) = NaN;
+    PeaksCondHead.maxMu(j) = NaN;
+  end
+    
+  cfgP.freqRange = theta;
+  cfgP.component = data_hand{num}.label{j};
+  peakFreq = cell2mat(RI_findPeak(cfgP, data_hand));                         % determine peaks in the theta-range of all participants (condition hand)
+  PeaksCondHand.peaksTheta(j) = length(peakFreq);                           % get the number of the determined peaks
+  if(PeaksCondHand.peaksTheta(j))                                           % calculate minimum and maximum peaks are found 
+    PeaksCondHand.minTheta(j) = min(peakFreq);
+    PeaksCondHand.maxTheta(j) = max(peakFreq);
+  else
+    PeaksCondHand.minTheta(j) = NaN;
+    PeaksCondHand.maxTheta(j) = NaN;
+  end
+    
+  cfgP.freqRange = theta;
+  cfgP.component = data_head{num}.label{j};
+  peakFreq = cell2mat(RI_findPeak(cfgP, data_head));                         % determine peaks in the theta-range of all participants (condition head)
+  PeaksCondHead.peaksTheta(j) = length(peakFreq);                           % get the number of the determined peaks
+  if (PeaksCondHead.peaksTheta(j))                                          % calculate minimum and maximum peaks are found
+    PeaksCondHead.minTheta(j) = min(peakFreq);
+    PeaksCondHead.maxTheta(j) = max(peakFreq);
+  else
+    PeaksCondHead.minTheta(j) = NaN;
+    PeaksCondHead.maxTheta(j) = NaN;
+  end
+end
+  
+end

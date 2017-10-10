@@ -8,7 +8,7 @@ function RI_main( cfg )
 %
 % The configuration can have the following parameters:
 %   cfg.condition = 'HandsFree', 'HandsRestrained' (default: 'HandsFree')
-%   cfg.agegroup  = '9Months', '12Months', 'Adults' (default: '12Months')
+%   cfg.agegroup  = '9Months', '12Months', '12MonthsV2', 'Adults' (default: '12Months')
 %   cfg.import    = 'yes', 'no' (Import from original files) (default: 'yes')
 %   cfg.version   = number (only relevant if cfg.import == 'no') (default: 1)
 %
@@ -52,6 +52,15 @@ switch agegroup                                                             % if
     acronym = '12M';
     grpFigString = 'Infants 12M';
     grpFileString = 'Infants-12M';
+    if strcmp(condition, 'HandsFree')
+      part = 52;
+    else
+      part = 68;
+    end
+  case '12MonthsV2'
+    acronym = '12Mv2';
+    grpFigString = 'Infants 12M';
+    grpFileString = 'Infants-12Mv2';
     if strcmp(condition, 'HandsFree')
       part = 52;
     else

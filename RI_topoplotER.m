@@ -11,7 +11,7 @@ function RI_topoplotER( cfg )
 %
 % The configuration can have the following parameters:
 %   cfg.condition = 'HandsFree', 'HandsRestrained' (default: 'HandsFree')
-%   cfg.agegroup  = '9Months', '12Months', 'Adults' (default: '12Months')
+%   cfg.agegroup  = '9Months', '12Months', '12MonthsV2', 'Adults' (default: '12Months')
 %   cfg.foi       = [begin end] (default: [6 8]);
 %   cfg.channel   = electrodes of interest (default: {'all', '-VEOG1', '-VEOG2', '-HEOG1', '-HEOG2'})
 %   cfg.filename  = title of pdf file
@@ -52,6 +52,8 @@ switch agegroup
     input_ag = '9M';
   case '12Months'
     input_ag = '12M';
+  case '12MonthsV2'
+    input_ag = '12Mv2';
   case 'Adults'
     input_ag = 'AD';
 end
