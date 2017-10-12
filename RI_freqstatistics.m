@@ -1,4 +1,4 @@
-function [data_pttest, pttestSource] = RI_freqstatistics(cfg, data_hand, data_head)
+function [data_pttest] = RI_freqstatistics(cfg, data_hand, data_head)
 % RI_FREQSTATISTICS conducts a paired-ttest between two conditions.
 %
 % Use as
@@ -7,7 +7,7 @@ function [data_pttest, pttestSource] = RI_freqstatistics(cfg, data_hand, data_he
 %
 % The configuration options are
 %    cfg.frequency    = number or range or 'all' (i.e. 6 or [begin end]), unit = Hz     (default = 'all')
-%    cfg.channel      = 'all' or a specific selection (i.e. {'C3', 'P*', '*4'})         (default = 'all')
+%    cfg.channel      = 'all' or a specific selection (i.e. {'C3', 'P4', 'Fz'})         (default = 'all')
 %    cfg.avgoverchan  = 'no' or 'yes'                                                   (default = 'no')
 %
 % This function requires the fieldtrip toolbox.
@@ -15,6 +15,14 @@ function [data_pttest, pttestSource] = RI_freqstatistics(cfg, data_hand, data_he
 % See also FT_FREQSTATISTICS
 
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
+
+% -------------------------------------------------------------------------
+% Check input
+% -------------------------------------------------------------------------
+if (any(~cellfun('isempty',(strfind(cfg.channel, '*')))) || ...
+   any(~cellfun('isempty',(strfind(cfg.channel, '+')))))
+ error('* and + are not accepted within channel definitions with this function');
+end
 
 % -------------------------------------------------------------------------
 % Calculate paired t-test

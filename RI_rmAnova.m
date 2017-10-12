@@ -17,8 +17,10 @@ function [data_rmanova, bsData] = RI_rmAnova(cfg, data_hand, data_head, varargin
 %
 % The configuration options are
 %    cfg.freq      = number or range (i.e. 6 or [6 10]), unit = Hz
-%    cfg.channel   = 'all' or a specific selection (i.e. {'C3', 'P*', '*4'})
-%                     (default: {'C3','C4','Cz','F3','F4','Fz','P3','P4','Pz'})
+%    cfg.channel   = 'all' or a specific selection (i.e. {'C3', 'P*', '*4', 'F3+F4'})
+%                     (default: {'F3','F4','Fz','C3','C4','Cz','P3','P4','Pz'})
+%
+% The optional output bsData returns the between subjects table
 %
 % See also RI_CHANNELSELECTION, FITRM, ranova, epsilon, mauchly
 
@@ -94,9 +96,29 @@ end
 % -------------------------------------------------------------------------
 % Determine channels/electrodes of interest
 % -------------------------------------------------------------------------
-channel = ft_getopt(cfg, 'channel', {'C3','C4','Cz','F3','F4','Fz', ...
+channel = ft_getopt(cfg, 'channel', {'F3','F4','Fz','C3','C4','Cz',...
                                      'P3','P4','Pz'});
+                                   
+cfgSD.channel = {'F3','F4','Fz','C3','C4','Cz','P3','P4','Pz'};
+cfgSD.avgoverchan = 'no';
+cfgSD.showcallinfo = 'no';
 
+for i=1:1:length(data_hand)                                                 % leave only channels of interest in the data
+  if ~isempty(data_hand{i})
+    data_hand{i} = ft_selectdata(cfgSD, data_hand{i});
+    data_head{i} = ft_selectdata(cfgSD, data_head{i});
+  end
+end
+
+if bwSubParam == 1
+  for i=1:1:length(data_hand2)
+    if ~isempty(data_hand2{i})
+      data_hand2{i} = ft_selectdata(cfgSD, data_hand2{i});
+      data_head2{i} = ft_selectdata(cfgSD, data_head2{i});
+    end
+  end
+end
+                                                      
 if any(strcmp(channel, 'all'))
   channel = data_hand{num}.label;
   data_rmanova.cfg.channel = channel';
