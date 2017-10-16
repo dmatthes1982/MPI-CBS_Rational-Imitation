@@ -6,7 +6,7 @@ function [data_pttest] = RI_freqstatistics(cfg, data_hand, data_head)
 % where the input data is the result from RI_PSDANALYSIS
 %
 % The configuration options are
-%    cfg.frequency    = number or range or 'all' (i.e. 6 or [begin end]), unit = Hz     (default = 'all')
+%    cfg.freq         = number or range or 'all' (i.e. 6 or [begin end]), unit = Hz     (default = 'all')
 %    cfg.channel      = 'all' or a specific selection (i.e. {'C3', 'P4', 'Fz'})         (default = 'all')
 %    cfg.avgoverchan  = 'no' or 'yes'                                                   (default = 'no')
 %
@@ -30,6 +30,7 @@ end
 cfg.avgoverchan = ft_getopt(cfg, 'avgoverchan', 'no');
 
 cfg.parameter     = 'powspctrm';                                            % kind of data
+cfg.frequency     = cfg.freq;
 cfg.avgoverfreq   = 'yes';
 cfg.method        = 'stats';                                                % using MATLAB statistic toolbox for analysis  
 cfg.statistic     = 'paired-ttest';                                         % using depentend t-test
@@ -82,8 +83,8 @@ end
 % -------------------------------------------------------------------------
 % Determine frequencies of interest
 % -------------------------------------------------------------------------
-if isfield(cfg, 'frequency')
-  freq = cfg.frequency;
+if isfield(cfg, 'freq')
+  freq = cfg.freq;
   if ischar(freq)
     if strcmp(freq, 'all')
       freq = [data_hand{num}.freq(1) data_hand{num}.freq(end)];
