@@ -7,11 +7,11 @@ function [data_rmanova, bsData] = RI_rmAnova(cfg, data_hand, data_head, varargin
 % Use as
 %   [data_rmanova] = RI_rmAnova(cfg, data_hand, data_head)
 %                  or
-%   [data_rmanova] = RI_rmAnova(cfg, data_hand1, data_head1, data_hand2, data_head2, bsVal1, bsVal2)
+%   [data_rmanova] = RI_rmAnova(cfg, data_hand1, data_head1, data_hand2, data_head2, 'free', 'restr')
 %                  or
 %   [data_rmanova, bsData] = RI_rmAnova(cfg, data_hand, data_head)
 %                  or
-%   [data_rmanova, bsData] = RI_rmAnova(cfg, data_hand1, data_head1, data_hand2, data_head2, bsVal1, bsVal2)
+%   [data_rmanova, bsData] = RI_rmAnova(cfg, data_hand1, data_head1, data_hand2, data_head2, 'free', 'restr')
 %
 % where the input data is the result from RI_PSDANALYSIS
 %

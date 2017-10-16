@@ -161,41 +161,61 @@ end
 % -------------------------------------------------------------------------
 
 if extInput == 1                                                             % if extended input is defined
-  graphData = zeros(numOfChan*2, 2);
+  graphMean = zeros(numOfChan*2, 2);
+  graphSD = zeros(numOfChan*2, 2);
   graphLabel{numOfChan*2} = [];
 else
-  graphData = zeros(numOfChan, 2);
+  graphMean = zeros(numOfChan, 2);
+  graphSD = zeros(numOfChan, 2);
   graphLabel{numOfChan} = [];
 end
 
 if extInput == 1                                                             % if extended input is defined
   for i=1:1:numOfChan
-    graphData(i*2 - 1, 1) = mean(matrixHead(i,:));
-    graphData(i*2 - 1, 2) = mean(matrixHand(i,:));
+    graphMean(i*2 - 1, 1) = mean(matrixHead(i,:));
+    graphSD(i*2 - 1, 1) = std(matrixHead(i,:));
+    graphMean(i*2 - 1, 2) = mean(matrixHand(i,:));
+    graphSD(i*2 - 1, 2) = std(matrixHand(i,:));
     graphLabel{i*2 - 1} = strcat(channel{i}, '-', cond);
-    graphData(i*2, 1) = mean(matrixHead2(i,:));
-    graphData(i*2, 2) = mean(matrixHand2(i,:));
+    graphMean(i*2, 1) = mean(matrixHead2(i,:));
+    graphSD(i*2 , 1) = std(matrixHead2(i,:));
+    graphMean(i*2, 2) = mean(matrixHand2(i,:));
+    graphSD(i*2, 2) = std(matrixHand2(i,:));
     graphLabel{i*2} = strcat(channel{i}, '-', cond2);
-    
   end
+   graphVector = 1:1:numOfChan*2;    
 else
   for i=1:1:numOfChan
-    graphData(i, 1) = mean(matrixHead(i,:));
-    graphData(i, 2) = mean(matrixHand(i,:));
+    graphMean(i, 1) = mean(matrixHead(i,:));
+    graphSD(i, 1) = std(matrixHead(i,:));
+    graphMean(i, 2) = mean(matrixHand(i,:));
+    graphSD(i, 2) = std(matrixHand(i,:));
     graphLabel{i} = strcat(channel{i}, '-', cond);
   end
+  graphVector = 1:1:numOfChan;
 end
 
 % -------------------------------------------------------------------------
 % Plot data
 % -------------------------------------------------------------------------
-graphLabel = categorical(graphLabel');
-bar(graphLabel, graphData);
+bar(graphVector, graphMean);
+set(gca, 'XTick', graphVector,'XTickLabel',graphLabel);
 if length(freq) == 2
   title(sprintf('head vs. hand in a freq range of %d to %d Hz', freq(1),... 
                 freq(2)));
 else
   title(sprintf('head vs. hand at %d Hz', freq(1)));
 end
+
+graphMean = graphMean';
+graphSD = graphSD';
+
+hold on;
+for k = 1:2
+  errorbar(graphVector+0.145*((-1)^k),  graphMean(k,:),  graphSD(k,:), '.k', 'LineWidth', 1.5);
+end
+hold off;
+
+legend('head touch', 'hand touch', 'head SD', 'hand SD');
 
 end
