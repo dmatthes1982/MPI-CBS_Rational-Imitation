@@ -12,6 +12,7 @@ function RI_easyBarPlot( cfg, data_hand, data_head, cond, varargin )
 % where the input data is the result from RI_PSDANALYSIS
 %
 % The configuration options are
+%    cfg.pdf_title = 'tite of output file' (default: BarGraph)
 %    cfg.freq      = number or range (i.e. 6 or [6 10]), unit = Hz, (default: [6 10])
 %    cfg.channel   = 'all' or a specific selection (i.e. {'C3', 'P*', '*4', 'F3+F4'}),
 %                    (default: {'Cz'})
@@ -21,8 +22,12 @@ function RI_easyBarPlot( cfg, data_hand, data_head, cond, varargin )
 % Copyright (C) 2017, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
-% Check input
+% Get and check input
 % -------------------------------------------------------------------------
+pdf_title = ft_getopt(cfg, 'pdf_title', 'BarGraph');
+freq      = ft_getopt(cfg, 'freq', [6 10]);
+channel   = ft_getopt(cfg, 'channel', {'Cz', 'P*', 'F3+F4'});
+
 switch length(varargin)
   case 0
     extInput = 0; 
@@ -52,8 +57,6 @@ end
 % -------------------------------------------------------------------------
 % Determine frequencies of interest
 % -------------------------------------------------------------------------
-freq = ft_getopt(cfg, 'freq', [6 10]);
-
 if(length(freq) > 2)
   error('Define a single frequency or specify a frequency range: i.e. [6 10]');
 end
@@ -80,8 +83,6 @@ end
 % -------------------------------------------------------------------------
 % Determine channels/electrodes of interest
 % -------------------------------------------------------------------------
-channel = ft_getopt(cfg, 'channel', {'Cz', 'P*', 'F3+F4'});                 % actual channels of interest
-                                   
 cfgSD.channel = {'F3','F4','Fz','C3','C4','Cz','P3','P4','Pz'};             % principal channels of interest
 cfgSD.avgoverchan = 'no';
 cfgSD.showcallinfo = 'no';
@@ -217,5 +218,27 @@ end
 hold off;
 
 legend('head touch', 'hand touch', 'head SD', 'hand SD');
+xlabel('components');
+ylabel('power over frequency (dB/Hz)');
+
+% -------------------------------------------------------------------------
+% Save graphic as pdf-File
+% -------------------------------------------------------------------------
+h=gcf;
+set(h, 'PaperOrientation','landscape');
+set(h, 'PaperType','a3');
+set(h, 'PaperUnit', 'centimeters');
+set(h, 'PaperSize', [42 29.7]);
+set(h, 'unit', 'normalized', 'Position', [0 0 0.9 0.9]);
+doc_title = sprintf('/data/pt_01798/Rational_Imitation_results/%s', ...
+                    pdf_title);
+file_path = strcat(doc_title, '_001.pdf');
+if exist(file_path, 'file') == 2
+  file_pattern = strcat(doc_title, '_*.pdf');
+  file_num = length(dir(file_pattern))+1;
+  file_path = sprintf('/data/pt_01798/Rational_Imitation_results/%s_%03d.pdf', ... 
+                      pdf_title, file_num);
+end
+print(gcf, '-dpdf', file_path);
 
 end
