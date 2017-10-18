@@ -163,34 +163,40 @@ end
 
 if extInput == 1                                                             % if extended input is defined
   graphMean = zeros(numOfChan*2, 2);
-  graphSD = zeros(numOfChan*2, 2);
+  graphSEM = zeros(numOfChan*2, 2);
   graphLabel{numOfChan*2} = [];
 else
   graphMean = zeros(numOfChan, 2);
-  graphSD = zeros(numOfChan, 2);
+  graphSEM = zeros(numOfChan, 2);
   graphLabel{numOfChan} = [];
 end
 
 if extInput == 1                                                             % if extended input is defined
   for i=1:1:numOfChan
     graphMean(i*2 - 1, 1) = mean(matrixHead(i,:));
-    graphSD(i*2 - 1, 1) = std(matrixHead(i,:));
+    graphSEM(i*2 - 1, 1) = std(matrixHead(i,:)) / ...
+                            sqrt(length(matrixHead(i,:)));
     graphMean(i*2 - 1, 2) = mean(matrixHand(i,:));
-    graphSD(i*2 - 1, 2) = std(matrixHand(i,:));
+    graphSEM(i*2 - 1, 2) = std(matrixHand(i,:)) / ...
+                            sqrt(length(matrixHand(i,:)));
     graphLabel{i*2 - 1} = strcat(channel{i}, '-', cond);
     graphMean(i*2, 1) = mean(matrixHead2(i,:));
-    graphSD(i*2 , 1) = std(matrixHead2(i,:));
+    graphSEM(i*2 , 1) = std(matrixHead2(i,:)) / ...
+                         sqrt(length(matrixHead2(i,:)));
     graphMean(i*2, 2) = mean(matrixHand2(i,:));
-    graphSD(i*2, 2) = std(matrixHand2(i,:));
+    graphSEM(i*2, 2) = std(matrixHand2(i,:)) / ...
+                        sqrt(length(matrixHand2(i,:)));
     graphLabel{i*2} = strcat(channel{i}, '-', cond2);
   end
    graphVector = 1:1:numOfChan*2;    
 else
   for i=1:1:numOfChan
     graphMean(i, 1) = mean(matrixHead(i,:));
-    graphSD(i, 1) = std(matrixHead(i,:));
+    graphSEM(i, 1) = std(matrixHead(i,:)) / ...
+                     sqrt(length(matrixHead(i,:)));
     graphMean(i, 2) = mean(matrixHand(i,:));
-    graphSD(i, 2) = std(matrixHand(i,:));
+    graphSEM(i, 2) = std(matrixHand(i,:)) / ...
+                      sqrt(length(matrixHand(i,:)));
     graphLabel{i} = strcat(channel{i}, '-', cond);
   end
   graphVector = 1:1:numOfChan;
@@ -209,15 +215,15 @@ else
 end
 
 graphMean = graphMean';
-graphSD = graphSD';
+graphSEM = graphSEM';
 
 hold on;
 for k = 1:2
-  errorbar(graphVector+0.145*((-1)^k),  graphMean(k,:),  graphSD(k,:), '.k', 'LineWidth', 1.5);
+  errorbar(graphVector+0.145*((-1)^k),  graphMean(k,:),  graphSEM(k,:), '.k', 'LineWidth', 1.5);
 end
 hold off;
 
-legend('head touch', 'hand touch', 'head SD', 'hand SD');
+legend('head touch', 'hand touch', 'head SEM', 'hand SEM');
 xlabel('components');
 ylabel('power over frequency (dB/Hz)');
 
