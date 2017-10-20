@@ -3,7 +3,7 @@ function [ dataPeaks ] = RI_mainFindPeak( cfg )
 % certain agegroup
 %
 % Use as
-%   [ dataPeaks ]RI_mainFindPeak( cfg )
+%   [ dataPeaks ] = RI_mainFindPeak( cfg )
 %
 % The configuration can have the following parameters:
 %   cfg.agegroup  = '9Months', '12Months', '12MonthsV2', 'Adults' (default: '12Months')
@@ -80,10 +80,13 @@ num = 1;
 while isempty(data_hand{num})
   num = num + 1; 
 end
-  
-numChn = length(data_hand{num}.label);                                      % get number of channels/electrodes
+
+labelOfInterest = {'F3', 'F4', 'Fz', 'C3', 'C4', 'Cz', 'P3', 'P4', 'Pz'};
+components = find(ismember(data_hand{1}.label,labelOfInterest))';
+
+numChn = length(components);                                                % get number of channels/electrodes
              
-PeaksCondHand.label = data_hand{num}.label';
+PeaksCondHand.label = labelOfInterest;
 PeaksCondHand.goodParticipants = length(data_hand) ...                      % calculate length of dataset / number of good participants
                - sum(cellfun(@isempty, data_hand));       
 PeaksCondHand.peaksMu = zeros(1, numChn);
@@ -93,7 +96,7 @@ PeaksCondHand.peaksTheta = zeros(1, numChn);
 PeaksCondHand.minTheta = zeros(1, numChn);
 PeaksCondHand.maxTheta = zeros(1, numChn);
      
-PeaksCondHead.label = data_head{num}.label';                            
+PeaksCondHead.label = labelOfInterest;                            
 PeaksCondHead.goodParticipants = length(data_head) ...                      % calculate length of dataset / number of good participants
                - sum(cellfun(@isempty, data_head));
 PeaksCondHead.peaksMu = zeros(1, numChn);
@@ -107,7 +110,7 @@ cfgP = [];
 
 for j=1:1:numChn                                                            % repeat this subloop for all channels/electrodes 
   cfgP.freqRange = mu;
-  cfgP.component = data_hand{num}.label{j};
+  cfgP.component = data_hand{num}.label{components(j)};
   peakFreq = cell2mat(RI_findPeak(cfgP, data_hand));                        % determine peaks in the mu-range of all participants (condition hand)
   PeaksCondHand.peaksMu(j) = length(peakFreq);                              % get the number of the determined peaks
   if (PeaksCondHand.peaksMu(j))                                             % calculate minimum and maximum peaks are found
@@ -119,7 +122,7 @@ for j=1:1:numChn                                                            % re
   end
     
   cfgP.freqRange = mu;
-  cfgP.component = data_head{num}.label{j};                              
+  cfgP.component = data_head{num}.label{components(j)};                              
   peakFreq = cell2mat(RI_findPeak(cfgP, data_head));                        % determine peaks in the mu-range of all participants (condition head)
   PeaksCondHead.peaksMu(j) = length(peakFreq);                              % get the number of the determined peaks            
   if(PeaksCondHead.peaksMu(j))                                              % calculate minimum and maximum peaks are found
@@ -131,8 +134,8 @@ for j=1:1:numChn                                                            % re
   end
     
   cfgP.freqRange = theta;
-  cfgP.component = data_hand{num}.label{j};
-  peakFreq = cell2mat(RI_findPeak(cfgP, data_hand));                         % determine peaks in the theta-range of all participants (condition hand)
+  cfgP.component = data_hand{num}.label{components(j)};
+  peakFreq = cell2mat(RI_findPeak(cfgP, data_hand));                        % determine peaks in the theta-range of all participants (condition hand)
   PeaksCondHand.peaksTheta(j) = length(peakFreq);                           % get the number of the determined peaks
   if(PeaksCondHand.peaksTheta(j))                                           % calculate minimum and maximum peaks are found 
     PeaksCondHand.minTheta(j) = min(peakFreq);
@@ -143,8 +146,8 @@ for j=1:1:numChn                                                            % re
   end
     
   cfgP.freqRange = theta;
-  cfgP.component = data_head{num}.label{j};
-  peakFreq = cell2mat(RI_findPeak(cfgP, data_head));                         % determine peaks in the theta-range of all participants (condition head)
+  cfgP.component = data_head{num}.label{components(j)};
+  peakFreq = cell2mat(RI_findPeak(cfgP, data_head));                        % determine peaks in the theta-range of all participants (condition head)
   PeaksCondHead.peaksTheta(j) = length(peakFreq);                           % get the number of the determined peaks
   if (PeaksCondHead.peaksTheta(j))                                          % calculate minimum and maximum peaks are found
     PeaksCondHead.minTheta(j) = min(peakFreq);
@@ -154,5 +157,5 @@ for j=1:1:numChn                                                            % re
     PeaksCondHead.maxTheta(j) = NaN;
   end
 end
-  
+
 end
