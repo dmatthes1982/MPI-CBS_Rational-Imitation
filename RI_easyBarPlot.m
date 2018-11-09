@@ -13,19 +13,19 @@ function RI_easyBarPlot( cfg, data_hand, data_head, cond, varargin )
 %
 % The configuration options are
 %    cfg.pdf_title = 'tite of output file' (default: BarGraph)
-%    cfg.freq      = number or range (i.e. 6 or [6 10]), unit = Hz, (default: [6 10])
+%    cfg.freq      = number or range (i.e. 6 or [6 8]), unit = Hz, (default: [6 8])
 %    cfg.channel   = 'all' or a specific selection (i.e. {'C3', 'P*', '*4', 'F3+F4'}),
 %                    (default: {'Cz'})
 %
 % See also RI_CHANNELSELECTION
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS
+% Copyright (C) 2017-2018, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get and check input
 % -------------------------------------------------------------------------
 pdf_title = ft_getopt(cfg, 'pdf_title', 'BarGraph');
-freq      = ft_getopt(cfg, 'freq', [6 10]);
+freq      = ft_getopt(cfg, 'freq', [6 8]);
 channel   = ft_getopt(cfg, 'channel', {'Cz', 'P*', 'F3+F4'});
 
 switch length(varargin)
@@ -207,6 +207,7 @@ end
 % -------------------------------------------------------------------------
 bar(graphVector, graphMean);
 set(gca, 'XTick', graphVector,'XTickLabel',graphLabel);
+set(gca, 'YGrid', 'on');
 if length(freq) == 2
   title(sprintf('head vs. hand in a freq range of %d to %d Hz', freq(1),... 
                 freq(2)));
@@ -223,9 +224,10 @@ for k = 1:2
 end
 hold off;
 
-legend('head touch', 'hand touch', 'head SEM', 'hand SEM');
-xlabel('components');
-ylabel('power over frequency (dB/Hz)');
+legend('head touch', 'hand touch');
+xlabel('Electrodes');
+ylabel('Power (\muV^2)');
+ylim([0 18]);
 
 % -------------------------------------------------------------------------
 % Save graphic as pdf-File

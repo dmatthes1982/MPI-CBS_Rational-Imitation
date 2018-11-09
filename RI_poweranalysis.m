@@ -1,6 +1,5 @@
-function [ data_out ] = RI_psdanalysis( data_in )
-% DUALPIANO_PSDANALYSIS estimates the power spectral destiny with
-% the following settings:
+function [ data_out ] = RI_poweranalysis( data_in )
+% RI_POWERANALYSIS estimates the power activity using following settings:
 %   freq range:       0 ... Fs/2 Hz
 %   freq resolution:  Fs / L Hz
 %
@@ -14,7 +13,7 @@ function [ data_out ] = RI_psdanalysis( data_in )
 %
 % See also FT_FREQANALYSIS
 
-% Copyright (C) 2017, Daniel Matthes, MPI CBS
+% Copyright (C) 2017-2018, Daniel Matthes, MPI CBS
 
 num = 1;
 
