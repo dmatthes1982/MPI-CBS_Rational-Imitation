@@ -48,7 +48,7 @@ while selection == false
   switch x
     case 1
       selection = true;
-      filename = '03a_avgpow6to9';
+      filename = '03a_avgpow2to5';
     case 2
       selection = true;
       filename = '03b_avgpow6to9';
