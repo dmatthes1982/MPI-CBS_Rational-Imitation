@@ -1,26 +1,24 @@
-function RA_easyExtPowPlot(cfg)
-% RA_EASYEXTPOWPLOT is a function, which makes it easier to plot the power
-% of multiple participants in one graphik.
+function [ data_peak ] = RA_findPeak(cfg)
+% RA_FINDPEAK searches for peaks in a certain passband of a certain
+% electrode. The most prominent peak will be returned.
 %
 % Use as
-%   RA_easyExtPowPlot(cfg)
+%   [ data_peak ] = RI_findPeak( cfg )
 %
-% where the input data have to be a result from RA_POW.
+% where the input data is the result from RA_POW
 %
 % The configuration options are
 %   cfg.srcFolder   = source folder (default: '/data/pt_01778/eegData/EEG_RA_processedFT/02_pow/')
 %   cfg.sessionStr  = session string (default: '001')
 %   cfg.condition   = options: 'SegHand' or 'SegHead' (default: 'SegHand')
-%   cfg.freqrange   = frequency range [fmin fmax], (default: [0 50])
-%   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [13])
-%                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [13] or [5, 4, 6]
-%   cfg.log         = use a logarithmic scale for the y axis, options: 'yes' or 'no' (default: 'no')
+%   cfg.freqrange   = frequency range: [begin end], unit = Hz
+%   cfg.electrode   = a certain component (i.e. specified as label ('C3' or 'P4') or a decimal number (14 or 24))
 %
 % This function requires the fieldtrip toolbox
 %
-% See also RA_POW
+% See also FINDPEAKS
 
-% Copyright (C) 2018-2019, Daniel Matthes, MPI CBS
+% Copyright (C) 2019, Daniel Matthes, MPI CBS
 
 % -------------------------------------------------------------------------
 % Get config options
@@ -28,13 +26,8 @@ function RA_easyExtPowPlot(cfg)
 srcFolder   = ft_getopt(cfg, 'srcFolder', '/data/pt_01778/eegData/EEG_RA_processedFT/02_pow/');
 sessionStr  = ft_getopt(cfg, 'sessionStr', '001');
 condition   = ft_getopt(cfg, 'condition', 'SegHand');
-freqrange   = ft_getopt(cfg, 'freqrange', [0 50]);
+freqrange   = ft_getopt(cfg, 'freqrange', [6 9.34]);
 elec        = ft_getopt(cfg, 'electrode', {'Cz'});
-log         = ft_getopt(cfg, 'log', 'no');
-
-if ~ismember(condition, {'SegHead','SegHand'})
-  error('Invalid condition! Choose either ''SegHand'' or ''SegHead''.');
-end
 
 % -------------------------------------------------------------------------
 % Path settings
@@ -60,14 +53,19 @@ part = listdlg('ListString', listOfPartStr);                                % op
 
 fileList      = fileList(ismember(1:1:numOfFiles, part));                   % reduce file list to selection
 listOfPart    = listOfPart(ismember(1:1:numOfFiles, part));
-listOfPartStr = num2cell(listOfPart);
-listOfPartStr = cellfun(@(x) num2str(x), listOfPartStr, ...
-                        'UniformOutput', false);
 numOfFiles    = length(fileList);                                           % estimate actual number of files (participants)
 
 % -------------------------------------------------------------------------
-% Check freqrange and electrode
+% Check freqrange and electrode 
 % -------------------------------------------------------------------------
+if(length(freqrange) ~= 2)
+  error('Specify a frequency range: [freqLow freqHigh]');
+end
+
+if(length(elec) ~= 1)
+  error('Specify a single electrode!');
+end
+
 load([srcFolder fileList{1}]);                                              %#ok<LOAD> % load data of first participant
 
 begCol = find(data_pow.freq >= freqrange(1), 1, 'first');                   % estimate desired powspctrm colums
@@ -91,44 +89,45 @@ else
   elec = tmpElec;
 end
 
-labelString = strjoin(data_pow.label(elec), ',');
+labelString = data_pow.label(elec);
+
+if begCol == endCol
+  error('Selected range results in one frequency, please select a larger range');
+else
+  freqCols = begCol:endCol;
+  actFreqRange = data_pow.freq(begCol:endCol);                              % Calculate actual frequency range
+end
+
+clear data_pow
 
 % -------------------------------------------------------------------------
-% Plot power
+% Find largest peak in specified range
 % -------------------------------------------------------------------------
-fprintf('Plot signals...\n');
-figure();
-if length(elec) == 1
-  title(sprintf('Power - %s - %s', condition, labelString));
-else
-  title(sprintf('Power - %s - %s (averaged)', condition, labelString));
-end
-xlabel('frequency in Hz');                                                  % set xlabel
-if strcmp(log, 'yes')
-  ylabel('power in dB');                                                    % set ylabel
-else
-  ylabel('power in \muV^2');
-end
-hold on;
+peakFreq{numOfFiles} = [];
 
 f = waitbar(0,'Please wait...');
 
-for i = 1:1:numOfFiles
+for i=1:1:numOfFiles
   load([srcFolder fileList{i}]);                                            %#ok<LOAD>
   waitbar(i/numOfFiles, f, 'Please wait...');
   
-  powData = data_pow.powspctrm(elec, begCol:endCol);
-  powData = mean(powData,1);
-  if strcmp(log, 'yes')
-    powData = 10 * log10( powData );
+  [pks, locs] = findpeaks(data_pow.powspctrm(elec, freqCols));
+  if length(pks) > 1
+    [~, maxLocs] = max(pks);
+    peakFreq{i} = actFreqRange(locs(maxLocs));
+  else
+    peakFreq{i} = actFreqRange(locs);
   end
-
-  plot(data_pow.freq(begCol:endCol), powData);
-
+  
   clear data_pow
 end
 
 close(f);                                                                   % close waitbar
-legend(listOfPartStr);                                                      % add legend
+
+data_peak.condition = condition;
+data_peak.label     = labelString;
+data_peak.freq      = actFreqRange;
+data_peak.part      = listOfPart';
+data_peak.peakFreq  = peakFreq;
 
 end

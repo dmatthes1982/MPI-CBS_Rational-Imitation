@@ -79,7 +79,7 @@ cfgAvg.showcallinfo   = 'no';
 ft_info off;
 
 % SegHand power data ------------------------------------------------------
-fprintf('<strong>Average SegHand power results over participants...</strong>\n');
+fprintf('\n<strong>Average SegHand power results over participants...</strong>\n');
 data_pow            = ft_freqgrandaverage(cfgAvg, data_SegHand_pow{:});
 data_pow.numOfPart  = numOfPart;
 
@@ -115,7 +115,7 @@ file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
 fprintf('The averaged SegHead power results will be saved in:\n');
 fprintf('%s ...\n', file_path);
 RA_saveData(cfg, 'data_pow', data_pow);
-fprintf('Data stored!\n\n');
+fprintf('Data stored!\n');
 clear data_pow data_SegHead_pow
 
 ft_info on;

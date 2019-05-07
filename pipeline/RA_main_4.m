@@ -41,8 +41,8 @@ fprintf('\n');
 selection = false;
 while selection == false
   cprintf([0,0.6,0], 'Which result do you want to use for the analysis:\n');
-  fprintf('[1] - Power result in a range from 2 to 5 Hz\n');
-  fprintf('[2] - Power result in a range from 6 to 9 Hz\n');
+  fprintf('[1] - Power result in a range from 2 to 5.333 Hz\n');
+  fprintf('[2] - Power result in a range from 6 to 9.333 Hz\n');
   x = input('Option: ');
 
   switch x

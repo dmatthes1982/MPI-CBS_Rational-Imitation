@@ -8,9 +8,10 @@ function RA_easyPowPlot(cfg, data)
 %
 % The configuration options are 
 %   cfg.freqrange   = frequency range [fmin fmax], (default: [0 50])
-%   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [10])
-%                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [10] or [1, 3, 2]
+%   cfg.electrode   = number of electrodes (default: {'Cz'} repsectively [13])
+%                     examples: {'Cz'}, {'F3', 'Fz', 'F4'}, [13] or [5, 4, 6]
 %   cfg.avgchan     = averaging over channels, (default: 'no')
+%   cfg.log         = use a logarithmic scale for the y axis, options: 'yes' or 'no' (default: 'no')
 %
 % This function requires the fieldtrip toolbox
 %
@@ -24,6 +25,7 @@ function RA_easyPowPlot(cfg, data)
 freqrange   = ft_getopt(cfg, 'freqrange', [0 50]);
 elec        = ft_getopt(cfg, 'electrode', {'Cz'});
 avgchan     = ft_getopt(cfg, 'avgchan', 'no');
+log       = ft_getopt(cfg, 'log', 'no');
 
 begCol = find(data.freq >= freqrange(1), 1, 'first');                       % estimate desired powspctrm colums
 endCol = find(data.freq <= freqrange(2), 1, 'last');
@@ -55,15 +57,27 @@ end
 % -------------------------------------------------------------------------
 labelString = strjoin(data.label(elec), ',');
 
+powData = data.powspctrm(elec, begCol:endCol);
+if strcmp(avgchan, 'yes')
+  powData = mean(powData,1);
+end
+if strcmp(log, 'yes')
+  powData = 10 * log10( powData );
+end
+
+plot(data.freq(begCol:endCol), powData);
+
 if strcmp(avgchan, 'no')
-  plot(data.freq(begCol:endCol), data.powspctrm(elec, begCol:endCol));
   title(sprintf('Power - Electrode.: %s', labelString));
 else
-  plot(data.freq(begCol:endCol), mean(data.powspctrm(elec, begCol:endCol),1));
   title(sprintf('Power - Electrode.: %s (averaged)', labelString));
 end
 
 xlabel('frequency in Hz');                                                  % set xlabel
-ylabel('power in \muV^2');                                                  % set ylabel
+if strcmp(log, 'yes')
+  ylabel('power in dB');                                                    % set ylabel
+else
+  ylabel('power in \muV^2');
+end
 
 end
