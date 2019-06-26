@@ -12,7 +12,9 @@ function [ data_peak ] = RA_findPeak(cfg)
 %   cfg.sessionStr  = session string (default: '001')
 %   cfg.condition   = options: 'SegHand' or 'SegHead' (default: 'SegHand')
 %   cfg.freqrange   = frequency range: [begin end], unit = Hz
-%   cfg.electrode   = a certain component (i.e. specified as label ('C3' or 'P4') or a decimal number (14 or 24))
+%   cfg.electrode   = select a certain or multiple components (i.e. 'C3', 'P4', {'C3', 'P4'}, 14, 24, [14, 24]),
+%                     channel labels as well as channel numbers are supported (default: 'C3'),
+%                     if multiple components are defined, the averaged signal will be used for peak detection
 %
 % This function requires the fieldtrip toolbox
 %
@@ -27,7 +29,7 @@ srcFolder   = ft_getopt(cfg, 'srcFolder', '/data/pt_01778/eegData/EEG_RA_process
 sessionStr  = ft_getopt(cfg, 'sessionStr', '001');
 condition   = ft_getopt(cfg, 'condition', 'SegHand');
 freqrange   = ft_getopt(cfg, 'freqrange', [6 9.34]);
-elec        = ft_getopt(cfg, 'electrode', {'Cz'});
+elec        = ft_getopt(cfg, 'electrode', {'C3'});
 
 % -------------------------------------------------------------------------
 % Path settings
@@ -56,14 +58,10 @@ listOfPart    = listOfPart(ismember(1:1:numOfFiles, part));
 numOfFiles    = length(fileList);                                           % estimate actual number of files (participants)
 
 % -------------------------------------------------------------------------
-% Check freqrange and electrode 
+% Check freqrange and electrode
 % -------------------------------------------------------------------------
 if(length(freqrange) ~= 2)
   error('Specify a frequency range: [freqLow freqHigh]');
-end
-
-if(length(elec) ~= 1)
-  error('Specify a single electrode!');
 end
 
 load([srcFolder fileList{1}]);                                              %#ok<LOAD> % load data of first participant
@@ -111,9 +109,10 @@ for i=1:1:numOfFiles
   load([srcFolder fileList{i}]);                                            %#ok<LOAD>
   waitbar(i/numOfFiles, f, 'Please wait...');
   
-  [pks, locs] = findpeaks(data_pow.powspctrm(elec, freqCols));
+  data = mean(data_pow.powspctrm(elec, freqCols),1);
+  [pks, locs, ~, p] = findpeaks(data);
   if length(pks) > 1
-    [~, maxLocs] = max(pks);
+    [~, maxLocs] = max(p);                                                  % select always the most prominent peak
     peakFreq{i} = actFreqRange(locs(maxLocs));
   else
     peakFreq{i} = actFreqRange(locs);
