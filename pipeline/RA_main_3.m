@@ -30,7 +30,7 @@ end
 
 %% part 3
 % 1. estimate power average in the range from 2 to 5.333 Hz
-% 2. estimate power average in the range from 6 to 9.333 Hz
+% 2. estimate power average in the range from 6 to 8 Hz
 
 cprintf([0,0.6,0], '<strong>[3] - Averaging power over frequencies</strong>\n');
 fprintf('\n');
@@ -70,10 +70,10 @@ for i = numOfPart
   fprintf('Data stored!\n\n');
   clear data_powavg
   
-  % estimate power average in the range from 6 to 9.333 Hz
-  fprintf('<strong>Estimate power average in the range from 6 to 9.333 Hz...</strong>\n');
+  % estimate power average in the range from 6 to 8 Hz
+  fprintf('<strong>Estimate power average in the range from 6 to 8 Hz...</strong>\n');
   cfg           = [];
-  cfg.freqrange = [6 9.34];
+  cfg.freqrange = [6 8];
   
   data_powavg     = RA_powerAverage(cfg, data_pow);
   
@@ -86,7 +86,7 @@ for i = numOfPart
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
 
-  fprintf('The averaged power (data_pow, 6-9.333 Hz) of participant %d in the SegHand condition will be saved in:\n', i);
+  fprintf('The averaged power (data_pow, 6-8 Hz) of participant %d in the SegHand condition will be saved in:\n', i);
   fprintf('%s ...\n', file_path);
   RA_saveData(cfg, 'data_powavg', data_powavg);
   fprintf('Data stored!\n\n');
@@ -123,10 +123,10 @@ for i = numOfPart
   fprintf('Data stored!\n\n');
   clear data_powavg
   
-  % estimate power average in the range from 6 to 9.333 Hz
-  fprintf('<strong>Estimate power average in the range from 6 to 9.333 Hz...</strong>\n');
+  % estimate power average in the range from 6 to 8 Hz
+  fprintf('<strong>Estimate power average in the range from 6 to 8 Hz...</strong>\n');
   cfg           = [];
-  cfg.freqrange = [6 9.34];
+  cfg.freqrange = [6 8];
   
   data_powavg     = RA_powerAverage(cfg, data_pow);
   
@@ -139,7 +139,7 @@ for i = numOfPart
   file_path = strcat(cfg.desFolder, cfg.filename, '_', cfg.sessionStr, ...
                      '.mat');
 
-  fprintf('The averaged power (data_pow, 6-9.333 Hz) of participant %d in the SegHead condition will be saved in:\n', i);
+  fprintf('The averaged power (data_pow, 6-8 Hz) of participant %d in the SegHead condition will be saved in:\n', i);
   fprintf('%s ...\n', file_path);
   RA_saveData(cfg, 'data_powavg', data_powavg);
   fprintf('Data stored!\n\n');

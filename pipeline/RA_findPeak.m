@@ -1,9 +1,9 @@
 function [ data_peak ] = RA_findPeak(cfg)
-% RA_FINDPEAK searches for peaks in a certain passband of a certain
-% electrode. The most prominent peak will be returned.
+% RA_FINDPEAK searches for peaks in a certain passband of single or
+% multiple electrodes. The most prominent peak will be returned.
 %
 % Use as
-%   [ data_peak ] = RI_findPeak( cfg )
+%   [ data_peak ] = RA_findPeak( cfg )
 %
 % where the input data is the result from RA_POW
 %
